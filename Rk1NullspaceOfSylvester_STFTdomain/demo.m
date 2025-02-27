@@ -23,7 +23,7 @@ useAmplitude = 1;
 avoidNearZeroPolys = 1;
 opt.MaxIterations = 100;
 opt.epsgrad = 1e-12;
-opt.solver = "c"
+opt.solver = "c";
 
 %% malloc
 rt = zeros(num_mic, 1); % reverb time in sec
@@ -37,7 +37,7 @@ l = zeros(num_mic, num_piece); % length of deconvoluted signal
 for i = 1:num_mic
     % calcurate the reververation time RT60
     rt(i) = reverb_time(ir, fs);
-    ir = ir(1:fs);
+    ir = ir(1:fs); ir = ir / norm(ir);
     L(i) = size(F(ir), 2);
 
     for j = 1:num_piece
@@ -46,7 +46,7 @@ for i = 1:num_mic
         N(i, j) = size(X{i, j}, 2);
     end
 end
-obsCat = [obs{1}; obs{2}];  obsCat = obsCat / max(abs(obsCat));
+obsCat = [obs{1}; obs{2}];
 d = L -1;
 
 %% deconvolution in TF domain
@@ -123,7 +123,7 @@ F.plotReassign(obsCat); title("wet")
 F.plotReassign(ret); title("lra");
 if useSLRA, F.plotReassign(ret_slra); title("slra");end
 
-audiowrite("output/wet.wav", obsCat/max(abs(obsCat)), fs)
-audiowrite("output/lra.wav", ret/max(abs(ret)), fs)
-audiowrite("output/slra.wav", ret_slra/max(abs(ret_slra)), fs)
+audiowrite("output/wet.wav", obsCat, fs)
+audiowrite("output/lra.wav", ret, fs)
+audiowrite("output/slra.wav", ret_slra, fs)
 % player = audioplayer(obsCat, 8000, 16, 4); play(player);
