@@ -118,7 +118,7 @@ ret_slra = F.pinv(RET_slra);
 
 F.plotReassign(s);title("dry")
 F.plotReassign(obsCat); title("wet")
-F.plotReassign(ret); title("lra");
+F.plotReassign(ret/max(abs(ret))); title("lra");
 if useSLRA, F.plotReassign(ret_slra); title("slra");end
 
 audiowrite("output/wet.wav", obsCat, fs)
