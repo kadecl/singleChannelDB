@@ -44,7 +44,7 @@ for i = 1:num_mic
         N(i, j) = size(X{i, j}, 2);
     end
 end
-obsCat = vec([obs{:}]);
+obsCat = vec([obs{:}]);  obsCat = obsCat / max(abs(obsCat));
 d = L -1;
 
 %% deconvolution in TF domain
