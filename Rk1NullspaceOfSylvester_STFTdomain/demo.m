@@ -13,7 +13,7 @@ s = [ss{1}; ss{2}];
 num_mic = 1;
 
 % ir data loading
-[ir, ~] = audioread("BFTLSPACELIBRARY_ChamberAL.wav");
+[ir, ~] = audioread("BFTLSPACELIBRARY_ChamberAL_11500.wav");
 %[ir, fs] = audioread("logic03sWoodenBooth8000.wav");
 %[ir{2}, fs(2)] = audioread("../data/BF TL SPACE LIBRARY/Drumbrella/Drumbrella 5'.R.wav");
 
