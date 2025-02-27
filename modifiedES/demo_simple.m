@@ -29,17 +29,40 @@ hhat = A \ b;
 long_s = audioread("../data/brahms_vc_8000Hz.wav");
 xx = conv(long_s, ir8000);
 XX = fft(xx);
+
+
+% recovering 1
 hhat_ext = zeros(size(xx)); 
 hhat_ext(1:lh) = hhat;
 Hhat = fft(hhat_ext);
 z = ifft(XX ./ Hhat);
+
+% recovering 2
+H = convmtx(hhat, lh);
+e = zeros(size(H,1), 1); e(1) = 1;
+hhat_inv = H \ e;
+z2 = conv(xx, hhat_inv);
+
+%% analyzing the results
+% listening
 soundsc(xx, fs); 
 pause(round(length(xx)/fs));
 soundsc(z, fs)
+pause(round(length(xx)/fs));
+soundsc(z2, fs)
 
 % Spectral Distance
 LogSpectralDistance(long_s, xx, fs)
 LogSpectralDistance(long_s, z, fs)
+LogSpectralDistance(long_s, z2, fs)
+
+
+%
+figure; tiledlayout(4,1);
+nexttile; plot(long_s); ylabel("dry"); xlim([1,length(xx)])
+nexttile; plot(xx); ylabel("wet"); xlim([1,length(xx)])
+nexttile; plot(z); ylabel("inverse in the FFT domain"); xlim([1,length(xx)])
+nexttile; plot(z2); ylabel("inverse using filter"); xlim([1,length(xx)])
 
 %% 
 
