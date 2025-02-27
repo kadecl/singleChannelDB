@@ -5,9 +5,11 @@ F = DGTtool("windowLength", 512, "windowShift", 128);
 
 % audio data loading
 num_piece = 2;
-ss{1} = audioread("1_8000.wav");
-ss{2} = audioread("2_8000.wav");
-s = vec([ss{:}]);
+temp =  audioread("input/9w3r7y_1.wav");
+ss{1} = temp(:,1);
+temp = audioread("input/9w3r7y_2.wav");
+ss{2} = temp(:,1);
+s = [ss{1}; ss{2}];
 num_mic = 1;
 
 % ir data loading
@@ -16,7 +18,7 @@ num_mic = 1;
 %[ir{2}, fs(2)] = audioread("../data/BF TL SPACE LIBRARY/Drumbrella/Drumbrella 5'.R.wav");
 
 %% slra options
-useSLRA = 1;
+useSLRA = 0;
 useAmplitude = 1;
 avoidNearZeroPolys = 1;
 opt.MaxIterations = 100;
@@ -44,7 +46,7 @@ for i = 1:num_mic
         N(i, j) = size(X{i, j}, 2);
     end
 end
-obsCat = vec([obs{:}]);  obsCat = obsCat / max(abs(obsCat));
+obsCat = [obs{1}; obs{2}];  obsCat = obsCat / max(abs(obsCat));
 d = L -1;
 
 %% deconvolution in TF domain
