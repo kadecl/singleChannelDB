@@ -5,9 +5,9 @@ F = DGTtool("windowLength", 512, "windowShift", 128);
 
 % audio data loading
 num_piece = 2;
-temp =  audioread("input/9w3r7y_1.wav");
+temp =  audioread("input/9w3r7y_01_1.wav");
 ss{1} = temp(:,1);
-[temp, fs] = audioread("input/9w3r7y_2.wav");
+[temp, fs] = audioread("input/9w3r7y_01_2.wav");
 ss{2} = temp(:,1);
 s = [ss{1}; ss{2}];
 num_mic = 1;
