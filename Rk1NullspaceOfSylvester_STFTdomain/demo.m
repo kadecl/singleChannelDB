@@ -7,13 +7,13 @@ F = DGTtool("windowLength", 512, "windowShift", 128);
 num_piece = 2;
 temp =  audioread("input/9w3r7y_1.wav");
 ss{1} = temp(:,1);
-temp = audioread("input/9w3r7y_2.wav");
+[temp, fs] = audioread("input/9w3r7y_2.wav");
 ss{2} = temp(:,1);
 s = [ss{1}; ss{2}];
 num_mic = 1;
 
 % ir data loading
-[ir, fs] = audioread("BFTLSPACELIBRARY_ChamberAL.wav");
+[ir, ~] = audioread("BFTLSPACELIBRARY_ChamberAL.wav");
 %[ir, fs] = audioread("logic03sWoodenBooth8000.wav");
 %[ir{2}, fs(2)] = audioread("../data/BF TL SPACE LIBRARY/Drumbrella/Drumbrella 5'.R.wav");
 
