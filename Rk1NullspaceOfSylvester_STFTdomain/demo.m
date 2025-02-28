@@ -133,9 +133,9 @@ for i=1:2
     % audiowrite("output/slra.wav", ret_slra, fs)
 end
 
-F.plotReassign(ss{1});title("dry")
-F.plotReassign(obs{1}); title("wet")
-F.plotReassign(ret{1}); title("lra");
+F.plotReassign(ss{1});title("dry"); saveas(gcf, audiofilename + "dry.png")
+F.plotReassign(obs{1}); title("wet"); saveas(gcf, audiofilename + "wet.png")
+F.plotReassign(ret{1}); title("lra"); saveas(gcf, audiofilename + "ret.png")
 if useSLRA, F.plotReassign(ret_slra); title("slra");end
 
 % obs: SDR 0.689, SIR Inf, SAR 0.689
