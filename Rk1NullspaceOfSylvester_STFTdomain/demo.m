@@ -5,10 +5,11 @@ F = DGTtool("windowLength", 512, "windowShift", 128);
 
 % audio data loading
 num_piece = 2;
-temp =  audioread("input/9w3r7y_01_1.wav");
-ss{1} = temp(:,1);
-[temp, fs] = audioread("input/9w3r7y_01_2.wav");
-ss{2} = temp(:,1);
+for i=1:num_piece
+    audiofilename = "input/9w3r7y_01_%d.wav";
+    [temp, fs] =  audioread(sprintf(audiofilename, i));
+    ss{i} = temp(:,1);
+end
 s = [ss{1}; ss{2}];
 num_mic = 1;
 
@@ -53,7 +54,7 @@ d = L -1;
 % malloc
 Fq = size(X{1}, 1);
 for i = 1:2, l(i) = N(1, i) - L(1) + 1; end
-RET = zeros(Fq, sum(l));
+RET1 = zeros(Fq, l(1)); RET2 = zeros(Fq, l(2));
 RET_slra = zeros(Fq, sum(l));
 % minimum to 2nd minimum singular value ratio
 singValRatio = zeros(Fq, 1);
@@ -80,50 +81,68 @@ parfor f = 1:Fq
     HhatPhase = Hhat / abs(Hhat);
     [~, idx_HhatPeak] = max(abs(Hhat));
     v1 = v1 / Hhat(idx_HhatPeak); v2 = v2 / Hhat(idx_HhatPeak); % phase normalization
-    RET(f,:) = [v1; v2]';
+    RET1(f,:) = v1';   RET2(f,:) = v2';
 
     % agcd by image representation
     averagePower = (a1^2 + a2^2) / sum(N);
     avoidNearZeroPolys = (averagePower > 1);
 
-    if useSLRA % && avoidNearZeroPolys
-        if useAmplitude
-            A1f = abs(X1f); A2f = abs(X2f);
-            [ph, info] = gcd_nls({A1f, A2f}, [], d, opt);
-            Hhat = info.Rh(:);
-        else
-            % どうやら，カーネルが二次元なのでかなり時間がかかる
-            [ph, info] = gcd_nls_complex({X1f, X2f}, [], d, opt);
-            Hhat = info.hh(:);
-        end
-        Syl = fullSyl(ph,d);
-        [U, Sigma, V] = svd(Syl, "econ");
-        Vtemp = V(:,end);
-        v1 = Vtemp(1:l(1)); v1 = a1 * v1 / norm(v1); % scale recovery
-        v2 = Vtemp(l(1)+1:end); v2 = a2 * v2 / norm(v2); % scale recovery
-
-        [HhatPeak, idx_HhatPeak] = max(abs(Hhat));
-        v1 = v1 / Hhat(idx_HhatPeak); v2 = v2 / Hhat(idx_HhatPeak); % phase normalization
-        RET_slra(f,:) = [v1; v2]';
-        
-        if useAmplitude
-            % 単純なLRAで計算した際の位相を貼り付ける
-            RET_f = RET(f,:);
-            RET_f_phase = RET_f / abs(RET_f);
-            RET_slra(f,:) = RET_slra(f,:) .* RET_f_phase;
-        end
-    end
+    % if useSLRA % && avoidNearZeroPolys
+    %     if useAmplitude
+    %         A1f = abs(X1f); A2f = abs(X2f);
+    %         [ph, info] = gcd_nls({A1f, A2f}, [], d, opt);
+    %         Hhat = info.Rh(:);
+    %     else
+    %         % どうやら，カーネルが二次元なのでかなり時間がかかる
+    %         [ph, info] = gcd_nls_complex({X1f, X2f}, [], d, opt);
+    %         Hhat = info.hh(:);
+    %     end
+    %     Syl = fullSyl(ph,d);
+    %     [U, Sigma, V] = svd(Syl, "econ");
+    %     Vtemp = V(:,end);
+    %     v1 = Vtemp(1:l(1)); v1 = a1 * v1 / norm(v1); % scale recovery
+    %     v2 = Vtemp(l(1)+1:end); v2 = a2 * v2 / norm(v2); % scale recovery
+    % 
+    %     [HhatPeak, idx_HhatPeak] = max(abs(Hhat));
+    %     v1 = v1 / Hhat(idx_HhatPeak); v2 = v2 / Hhat(idx_HhatPeak); % phase normalization
+    %     RET_slra(1,f,:) = v1';  RET_slra(2,f,:) = v2';
+    % 
+    %     if useAmplitude
+    %         % 単純なLRAで計算した際の位相を貼り付ける
+    %         RET_f = RET(f,:);
+    %         RET_f_phase = RET_f / abs(RET_f);
+    %         RET_slra(f,:) = RET_slra(f,:) .* RET_f_phase;
+    %     end
+    % end
 end
 %% 
-ret = F.pinv(RET);
-ret_slra = F.pinv(RET_slra);
+ret = cell(1);
+ret{1} = F.pinv(RET1(:,:));  ret{2} = F.pinv(RET2(:,:));
+for i=1:2
+    
+    % ret_slra = F.pinv(RET_slra);
+    len_ss = length(ss{i});
+    [SDR,SIR,SAR,perm] = bss_eval_sources(obs{i}(1:len_ss)', ss{i}');
+    fprintf("obs: SDR %2.3f, SIR %2.3f, SAR %2.3f\n", SDR, SIR, SAR)
 
-F.plotReassign(s);title("dry")
-F.plotReassign(obsCat); title("wet")
-F.plotReassign(ret); title("lra");
+    [SDR,SIR,SAR,perm] = bss_eval_sources(ret{i}(1:len_ss)', ss{i}');
+    fprintf("ret: SDR %2.3f, SIR %2.3f, SAR %2.3f\n", SDR, SIR, SAR)
+
+    audiowrite(sprintf("output/wet_%d.wav", i), obs{i}, fs)
+    audiowrite(sprintf("output/lra_%d.wav", i), ret{i}, fs)
+    % audiowrite("output/slra.wav", ret_slra, fs)
+end
+
+F.plotReassign(ss{1});title("dry")
+F.plotReassign(obs{1}); title("wet")
+F.plotReassign(ret{1}); title("lra");
 if useSLRA, F.plotReassign(ret_slra); title("slra");end
 
-audiowrite("output/wet.wav", obsCat, fs)
-audiowrite("output/lra.wav", ret, fs)
-audiowrite("output/slra.wav", ret_slra, fs)
+% obs: SDR 0.689, SIR Inf, SAR 0.689
+% ret: SDR 4.660, SIR Inf, SAR 4.660
+% obs: SDR -0.120, SIR Inf, SAR -0.120
+% ret: SDR 3.335, SIR Inf, SAR 3.335
+
+% audiowrite("output/slra.wav", ret_slra, fs)
 % player = audioplayer(obsCat, 8000, 16, 4); play(player);
+
