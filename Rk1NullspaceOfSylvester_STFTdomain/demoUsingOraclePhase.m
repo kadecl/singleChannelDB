@@ -61,6 +61,7 @@ d = L -1;
 Fq = size(X{1}, 1);
 for i = 1:2, l(i) = N(1, i) - L(1) + 1; end
 RET1 = zeros(Fq, l(1)); RET2 = zeros(Fq, l(2));
+RET1W = zeros(Fq, l(1)); RET2W = zeros(Fq, l(2));
 RET_slra = zeros(Fq, sum(l));
 % minimum to 2nd minimum singular value ratio
 singValRatio = zeros(Fq, 1);
@@ -94,18 +95,23 @@ parfor f = 1:Fq
     % use Oracle PHASE
     S1f = S{1,1}(f,:); S2f = S{1,2}(f,:);  Sf = [S1f'; S2f'];
     SfAng = angle(Sf);
-    % aveAngDiff = mean(SfAng - VfAng);
-    weight = log10(abs(Vf));
-    aveAngDiff = sum(weight.*(SfAng - VfAng)) / sum(weight);
+    aveAngDiff = mean(SfAng - VfAng);
     EstPhaseUsingOracle = exp(1i * aveAngDiff);
-    Vf = Vf .* EstPhaseUsingOracle; % / Hhatmax;
+    Vf_avephase = Vf * EstPhaseUsingOracle; % / Hhatmax;
+
+    weight = abs(Vf);
+    aveAngDiffW = sum(weight.*(SfAng - VfAng)) / sum(weight);
+    EstPhaseUsingOracleW = exp(1i * aveAngDiffW);
+    Vf_w = Vf * EstPhaseUsingOracleW;
 
     % v1 = v1 / Hhatmax; v2 = v2 / Hhatmax; ::
     % ただでさえあやしい時間周波数領域での畳み込みの成立を前提とした
     % 誤差が蓄積しているHhatを使って正規化するのはどうなん．．ということでつかわないかも．
-    v1 = Vf(1:l(1));% v1 = a1 * v1 / norm(v1); % scale recovery
-    v2 = Vf(l(1)+1:end); %v2 = a2 * v2 / norm(v2); % scale recovery
+    v1 = Vf_avephase(1:l(1));% v1 = a1 * v1 / norm(v1); % scale recovery
+    v2 = Vf_avephase(l(1)+1:end); %v2 = a2 * v2 / norm(v2); % scale recovery
     RET1(f,:) = v1';   RET2(f,:) = v2';
+
+    RET1W(f,:) = Vf_w(1:l(1))'; RET2W(f,:) = Vf_w(l(1)+1:end)';
 
     % if useSLRA % && avoidNearZeroPolys
     %     if useAmplitude
@@ -138,6 +144,7 @@ end
 %% 
 ret = cell(1);
 ret{1} = F.pinv(RET1(:,:));  ret{2} = F.pinv(RET2(:,:));
+ret_w{1} = F.pinv(RET1W); ret_w{2} = F.pinv(RET2W);
 for i=1:2
     
     % ret_slra = F.pinv(RET_slra);
@@ -148,16 +155,22 @@ for i=1:2
     [SDR,SIR,SAR,perm] = bss_eval_sources(ret{i}(1:len_ss)', ss{i}');
     fprintf("ret: SDR %2.3f, SIR %2.3f, SAR %2.3f\n", SDR, SIR, SAR)
 
-    audiowrite("output/" + sprintf(audiofilename +"_wet_ORACLE(w).wav", i), obs{i}, fs)
-    audiowrite("output/" + sprintf(audiofilename +"_lra_ORACLE(w).wav", i), ret{i}, fs)
+    [SDR,SIR,SAR,perm] = bss_eval_sources(ret_w{i}(1:len_ss)', ss{i}');
+    fprintf("ret(w): SDR %2.3f, SIR %2.3f, SAR %2.3f\n", SDR, SIR, SAR)
+
+    audiowrite("output/" + sprintf(audiofilename +"_wet.wav", i), obs{i}, fs)
+    audiowrite("output/" + sprintf(audiofilename +"_lra_ORACLE.wav", i), ret{i}, fs)
+    audiowrite("output/" + sprintf(audiofilename +"_lra_ORACLE(w).wav", i), ret_w{i}, fs)
     % audiowrite("output/slra.wav", ret_slra, fs)
 end
 
 F.plotReassign(ss{1});title("dry"); 
-saveas(gcf, "result/" + sprintf(audiofilename,1) + "_ORACLE(w)_dry.png")
+saveas(gcf, "result/" + sprintf(audiofilename,1) + "_dry.png")
 F.plotReassign(obs{1}); title("wet"); 
-saveas(gcf, "result/" + sprintf(audiofilename,1) + "_ORACLE(w)_wet.png")
+saveas(gcf, "result/" + sprintf(audiofilename,1) + "_wet.png")
 F.plotReassign(ret{1}); title("lra");
+saveas(gcf, "result/" + sprintf(audiofilename,1) + "_ORACLE_ret.png")
+F.plotReassign(ret_w{1}); title("lra(w)");
 saveas(gcf, "result/" + sprintf(audiofilename,1) + "_ORACLE(w)_ret.png")
 if useSLRA, F.plotReassign(ret_slra); title("slra");end
 
@@ -167,10 +180,9 @@ if useSLRA, F.plotReassign(ret_slra); title("slra");end
 %% non-weighted mean  
 % obs: SDR 0.689, SIR Inf, SAR 0.689
 % ret: SDR 6.136, SIR Inf, SAR 6.136
+% ret(w): SDR 6.214, SIR Inf, SAR 6.214
 % obs: SDR -0.120, SIR Inf, SAR -0.120
 % ret: SDR 5.033, SIR Inf, SAR 5.033
-%% used weighted mean for phase recoer
-% obs: SDR 0.689, SIR Inf, SAR 0.689
-% ret: SDR 5.967, SIR Inf, SAR 5.967
-% obs: SDR -0.120, SIR Inf, SAR -0.120
-% ret: SDR 4.561, SIR Inf, SAR 4.561
+% ret(w): SDR 5.250, SIR Inf, SAR 5.250
+
+% weight をいれることで若干改善．ただ，きいてもわからない

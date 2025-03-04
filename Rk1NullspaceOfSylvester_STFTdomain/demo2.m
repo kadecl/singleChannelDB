@@ -94,7 +94,7 @@ parfor f = 1:Fq
     S1f = S{1,1}(f,:); S2f = S{1,2}(f,:);  Sf = [S1f'; S2f'];
     SfAng = angle(Sf);
     % aveAngDiff = mean(SfAng - VfAng);
-    weight = log10(abs(Vfend));
+    weight = abs(Vfend);
     aveAngDiff = sum(weight.*(SfAng - VfAng)) / sum(weight);
     EstPhaseUsingOracle = exp(1i * aveAngDiff);
     Vfend = Vfend .* EstPhaseUsingOracle; % / Hhatmax;
@@ -159,6 +159,14 @@ if useSLRA
     saveas(gcf, "result/" + sprintf(audiofilename,1) + "_SLRA_ORACLE.png")
 end
 
+%どの結果も時間のマイナス方向に信号が漏れ出ているのがきになる
 
 % audiowrite("output/slra.wav", ret_slra, fs)
 % player = audioplayer(obsCat, 8000, 16, 4); play(player);
+
+% obs: SDR 0.689, SIR Inf, SAR 0.689
+% ret: SDR 6.214, SIR Inf, SAR 6.214
+% SLRA: SDR -14.830, SIR Inf, SAR -14.830
+% obs: SDR -0.120, SIR Inf, SAR -0.120
+% ret: SDR 5.250, SIR Inf, SAR 5.250
+% SLRA: SDR -15.199, SIR Inf, SAR -15.199
