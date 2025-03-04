@@ -1,5 +1,5 @@
 %%% 20250228 demo.m に，SylvesterSLRAを使う.
-%%% 位相のオラクルを使う
+%%% ためしに，ちょっとだけ低ランク近似させる
 
 clear all
 %% settings
@@ -159,7 +159,7 @@ if useSLRA
     saveas(gcf, "result/" + sprintf(audiofilename,1) + "_SLRA_ORACLE.png")
 end
 
-%どの結果も時間のマイナス方向に信号が漏れ出ているのがきになる
+% だめかも
 
 % audiowrite("output/slra.wav", ret_slra, fs)
 % player = audioplayer(obsCat, 8000, 16, 4); play(player);

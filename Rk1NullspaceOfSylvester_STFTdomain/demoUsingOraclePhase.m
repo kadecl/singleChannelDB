@@ -2,7 +2,7 @@
 %%% 残響除去後のスペクトルに，オラクルから得る位相差分を貼り付ける方法を検証する．位相の話がいったん落ち着くので，
 %%% 手法のメインなアイディアの良さを評価できることが期待できる．
 
-clear all
+%clear all
 %% settings
 % DGT tool
 F = DGTtool("windowLength", 512, "windowShift", 128);
@@ -55,6 +55,9 @@ for i = 1:num_mic
 end
 obsCat = [obs{1}; obs{2}];
 d = L -1;
+%padding = 10
+d = d - padding;
+L = L - padding;
 
 %% deconvolution in TF domain
 % malloc
@@ -67,7 +70,7 @@ RET_slra = zeros(Fq, sum(l));
 singValRatio = zeros(Fq, 1);
 
 % frequency-wise processing
-parfor f = 1:Fq
+for f = 1:Fq
     temp = X{1, 1};
     X1f = temp(f, :)';
     % a1 = norm(X1f); X1fとX2fの大きさで別々に正規化してたらだめじゃん．
@@ -95,12 +98,14 @@ parfor f = 1:Fq
     % use Oracle PHASE
     S1f = S{1,1}(f,:); S2f = S{1,2}(f,:);  Sf = [S1f'; S2f'];
     SfAng = angle(Sf);
-    aveAngDiff = mean(SfAng - VfAng);
+    %aveAngDiff = mean(SfAng - VfAng);
+    aveAngDiff = weightedMeanWithZeroPadding(SfAng, VfAng);
     EstPhaseUsingOracle = exp(1i * aveAngDiff);
     Vf_avephase = Vf * EstPhaseUsingOracle; % / Hhatmax;
 
     weight = abs(Vf);
-    aveAngDiffW = sum(weight.*(SfAng - VfAng)) / sum(weight);
+    % aveAngDiffW = sum(weight.*(SfAng - VfAng)) / sum(weight);
+    aveAngDiffW = weightedMeanWithZeroPadding(SfAng, VfAng, weight);
     EstPhaseUsingOracleW = exp(1i * aveAngDiffW);
     Vf_w = Vf * EstPhaseUsingOracleW;
 
@@ -149,6 +154,11 @@ for i=1:2
     
     % ret_slra = F.pinv(RET_slra);
     len_ss = length(ss{i});
+    len_ret = length(ret{i});
+    if len_ss > len_ret
+        ss{i} = ss{i}(1:len_ret);
+        len_ss = len_ret;
+    end
     [SDR,SIR,SAR,perm] = bss_eval_sources(obs{i}(1:len_ss)', ss{i}');
     fprintf("obs: SDR %2.3f, SIR %2.3f, SAR %2.3f\n", SDR, SIR, SAR)
 
@@ -159,8 +169,8 @@ for i=1:2
     fprintf("ret(w): SDR %2.3f, SIR %2.3f, SAR %2.3f\n", SDR, SIR, SAR)
 
     audiowrite("output/" + sprintf(audiofilename +"_wet.wav", i), obs{i}, fs)
-    audiowrite("output/" + sprintf(audiofilename +"_lra_ORACLE.wav", i), ret{i}, fs)
-    audiowrite("output/" + sprintf(audiofilename +"_lra_ORACLE(w).wav", i), ret_w{i}, fs)
+    audiowrite("output/" + sprintf(audiofilename +"_lra_ORACLE_pad=%d.wav", i, padding), ret{i}, fs)
+    audiowrite("output/" + sprintf(audiofilename +"_lra_ORACLE(w)_pad=%d.wav", i, padding), ret_w{i}, fs)
     % audiowrite("output/slra.wav", ret_slra, fs)
 end
 
@@ -169,9 +179,9 @@ saveas(gcf, "result/" + sprintf(audiofilename,1) + "_dry.png")
 F.plotReassign(obs{1}); title("wet"); 
 saveas(gcf, "result/" + sprintf(audiofilename,1) + "_wet.png")
 F.plotReassign(ret{1}); title("lra");
-saveas(gcf, "result/" + sprintf(audiofilename,1) + "_ORACLE_ret.png")
+saveas(gcf, "result/" + sprintf(audiofilename + "_ORACLE_ret_pad=%d.png",1, padding) )
 F.plotReassign(ret_w{1}); title("lra(w)");
-saveas(gcf, "result/" + sprintf(audiofilename,1) + "_ORACLE(w)_ret.png")
+saveas(gcf, "result/" + sprintf(audiofilename + "_ORACLE(w)_ret.png",1, padding) )
 if useSLRA, F.plotReassign(ret_slra); title("slra");end
 
 
@@ -185,4 +195,42 @@ if useSLRA, F.plotReassign(ret_slra); title("slra");end
 % ret: SDR 5.033, SIR Inf, SAR 5.033
 % ret(w): SDR 5.250, SIR Inf, SAR 5.250
 
+
+%どの結果も時間のマイナス方向に信号が漏れ出ているのがきになる
 % weight をいれることで若干改善．ただ，きいてもわからない
+
+% padding =
+% 
+%     10
+% 
+% index computed (OLA)
+% obs: SDR 0.689, SIR Inf, SAR 0.689
+% ret: SDR -0.123, SIR Inf, SAR -0.123
+% ret(w): SDR -0.151, SIR Inf, SAR -0.151
+% obs: SDR -0.120, SIR Inf, SAR -0.120
+% ret: SDR 3.056, SIR Inf, SAR 3.056
+% ret(w): SDR 2.829, SIR Inf, SAR 2.829
+% index computed (OLA)
+% 2
+% obs: SDR 0.689, SIR Inf, SAR 0.689
+% ret: SDR 8.056, SIR Inf, SAR 8.056
+% ret(w): SDR 8.071, SIR Inf, SAR 8.071
+% obs: SDR -0.120, SIR Inf, SAR -0.120
+% ret: SDR 7.384, SIR Inf, SAR 7.384
+% ret(w): SDR 7.209, SIR Inf, SAR 7.209
+% -2 (じっさいよりながいIR長)
+% index computed (OLA)
+% obs: SDR 0.668, SIR Inf, SAR 0.668
+% ret: SDR 4.215, SIR Inf, SAR 4.215
+% ret(w): SDR 4.288, SIR Inf, SAR 4.288
+% obs: SDR -0.136, SIR Inf, SAR -0.136
+% ret: SDR 2.163, SIR Inf, SAR 2.163
+% ret(w): SDR 2.054, SIR Inf, SAR 2.054
+% -10
+% index computed (OLA)
+% obs: SDR 0.825, SIR Inf, SAR 0.825
+% ret: SDR -1.172, SIR Inf, SAR -1.172
+% ret(w): SDR -1.099, SIR Inf, SAR -1.099
+% obs: SDR -0.028, SIR Inf, SAR -0.028
+% ret: SDR -1.837, SIR Inf, SAR -1.837
+% ret(w): SDR -1.775, SIR Inf, SAR -1.775
