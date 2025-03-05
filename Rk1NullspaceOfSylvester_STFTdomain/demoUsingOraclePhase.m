@@ -103,7 +103,7 @@ for f = 1:Fq
     EstPhaseUsingOracle = exp(1i * aveAngDiff);
     Vf_avephase = Vf * EstPhaseUsingOracle; % / Hhatmax;
 
-    weight = abs(Vf);
+    weight = abs(Sf);
     % aveAngDiffW = sum(weight.*(SfAng - VfAng)) / sum(weight);
     aveAngDiffW = weightedMeanWithZeroPadding(SfAng, VfAng, weight);
     EstPhaseUsingOracleW = exp(1i * aveAngDiffW);
@@ -194,6 +194,9 @@ if useSLRA, F.plotReassign(ret_slra); title("slra");end
 % obs: SDR -0.120, SIR Inf, SAR -0.120
 % ret: SDR 5.033, SIR Inf, SAR 5.033
 % ret(w): SDR 5.250, SIR Inf, SAR 5.250
+% さらに，位相差分の重みをオラクルの振幅を使用するとわずかに改善
+% ret(w): SDR 6.296, SIR Inf, SAR 6.296
+% ret(w): SDR 5.102, SIR Inf, SAR 5.102
 
 
 %どの結果も時間のマイナス方向に信号が漏れ出ているのがきになる

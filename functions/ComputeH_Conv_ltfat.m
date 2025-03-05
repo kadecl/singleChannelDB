@@ -63,11 +63,11 @@ classdef ComputeH_Conv_ltfat
                 % for j=1:a
                 % h(j,:) = h(j,:) + reshape(sum(ifft(circshift(tmp,j-1,1) .* fft(squeeze(H(m+1,:,:))) ), 2),1,[]);
                 % end
-                h = h + reshape(sum(ifft( squeeze(sum(reshape(circshift(obj.Prod_FwG,[b*m m]),[],a,M),2))/a .* fft(squeeze(H(m+1,:,:))) ), 2),[],1);
+                % h = h + reshape(sum(ifft( squeeze(sum(reshape(circshift(obj.Prod_FwG,[b*m m]),[],a,M),2))/a .* fft(squeeze(H(m+1,:,:))) ), 2),[],1);
                 %%%%%%%%%%%%%%%
         
 
-                % h = h + sum(ifft( circshift(obj.Prod_FwG,[b*m m]) .* fft(upsample(squeeze(H(m+1,:,:)),a)) ), 2);
+                h = h + sum(ifft( circshift(obj.Prod_FwG,[b*m m]) .* fft(upsample(squeeze(H(m+1,:,:)),a)) ), 2);
             end
             h=real(h);
             h=reshape(reshape(h,a,[])./obj.frame,[],1)/M^2;
