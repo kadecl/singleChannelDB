@@ -1,6 +1,8 @@
 %%% 20250228 demo.m に，オラクル情報を使った差分
 %%% 残響除去後のスペクトルに，オラクルから得る位相差分を貼り付ける方法を検証する．位相の話がいったん落ち着くので，
 %%% 手法のメインなアイディアの良さを評価できることが期待できる．
+%%% 松山さんの直行射影のアイディアをとりいれる。
+%%% TF領域でのサブバンドごとのAGCD計算により得たインパルス応答を直行射影してIRを復元する。そのあと再度クリーンを計算する
 
 % clear all
 %% loading
@@ -134,6 +136,7 @@ ret{1} = F.pinv(RET1(:,:));  ret{2} = F.pinv(RET2(:,:));
 ret_w{1} = F.pinv(RET1W); ret_w{2} = F.pinv(RET2W);
 
 %%%===
+% orthogonal projection 
 ltfatstart
 gt=gabwin('hann',a,M);
 corwin=xcorr(circshift(gt,M/2),circshift(gd,M/2));
