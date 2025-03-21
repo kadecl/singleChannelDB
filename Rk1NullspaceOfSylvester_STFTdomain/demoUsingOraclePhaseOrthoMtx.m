@@ -2,19 +2,15 @@
 %%% 残響除去後のスペクトルに，オラクルから得る位相差分を貼り付ける方法を検証する．位相の話がいったん落ち着くので，
 %%% 手法のメインなアイディアの良さを評価できることが期待できる．
 
-%clear all
-%% settings
-% DGT tool
-F = DGTtool("windowLength", 512, "windowShift", 128);
-
+% clear all
+%% loading
 % audio data loading
 num_piece = 2;
 for i=1:num_piece
     audiofilename = "9w3r7y_01_%d";
     [temp, fs] =  audioread("input/" + sprintf(audiofilename,i)+".wav");
-    ss{i} = temp(:,1);
+    s{i} = temp(:,1);
 end
-s = [ss{1}; ss{2}];
 num_mic = 1;
 
 % ir data loading
@@ -22,61 +18,47 @@ num_mic = 1;
 %[ir, fs] = audioread("logic03sWoodenBooth8000.wav");
 %[ir{2}, fs(2)] = audioread("../data/BF TL SPACE LIBRARY/Drumbrella/Drumbrella 5'.R.wav");
 
-%% slra options
-useSLRA = 0;
-useAmplitude = 1;
-avoidNearZeroPolys = 1;
-opt.MaxIterations = 100;
-opt.epsgrad = 1e-12;
-opt.solver = "c";
-
 %% malloc
-rt = zeros(num_mic, 1); % reverb time in sec
-obs = cell(num_mic,num_piece); % obs
+obs = cell(num_mic, num_piece); % obs
 X = cell(num_mic, num_piece); % STFTs of obs. signal
-S = cell(num_mic, num_piece); % STFTs of dry signal
+S = cell(num_mic, num_piece);   % STFTs of dry signal
 N = zeros(num_mic, num_piece); % length of obserbation
-L = zeros(num_mic, 1); % ir length = d + 1
+Lir = zeros(num_mic, 1); % ir length = d + 1
 l = zeros(num_mic, num_piece); % length of deconvoluted signal
 
-%% resample and shortening
-for i = 1:num_mic
-    % calcurate the reververation time RT60
-    rt(i) = reverb_time(ir, fs);
-    ir = ir(1:fs); ir = ir / norm(ir);
-    L(i) = size(F(ir), 2);
+%% convolution
+% calcurate the reververation time RT60 (IR shortening)
+rt = reverb_time(ir, fs);
+ir = ir(1:fs); ir = ir / norm(ir);
+IR = dgt(ir,gt,a,M,'timeinv');
+Lir = size(IR, 2);
 
-    for j = 1:num_piece
-        obs{i, j} = conv(ss{j}, ir);
-        X{i, j} = F(obs{i, j});
-        N(i, j) = size(X{i, j}, 2);
-        S{i, j} = F(ss{j});
-    end
+for j=1:num_piece
+    obs{j} = postpad(obs{j}, n);
+    X{j} = dgt(obs{j},gt,a,M,'timeinv');
+    N(j) = size(X{j}, 2);
 end
 obsCat = [obs{1}; obs{2}];
-d = L -1;
-%padding = 10
+
+%% resample and shortening
+d = Lir - 1;
+padding = 0;
 d = d - padding;
-L = L - padding;
+Lir = Lir - padding;
 
 %% deconvolution in TF domain
-% malloc
 Fq = size(X{1}, 1);
-for i = 1:2, l(i) = N(1, i) - L(1) + 1; end
+l = N - Lir + 1;
+
 RET1 = zeros(Fq, l(1)); RET2 = zeros(Fq, l(2));
 RET1W = zeros(Fq, l(1)); RET2W = zeros(Fq, l(2));
-RET_slra = zeros(Fq, sum(l));
 % minimum to 2nd minimum singular value ratio
 singValRatio = zeros(Fq, 1);
 
 % frequency-wise processing
 for f = 1:Fq
-    temp = X{1, 1};
-    X1f = temp(f, :)';
-    % a1 = norm(X1f); X1fとX2fの大きさで別々に正規化してたらだめじゃん．
-    temp = X{1, 2};
-    X2f = temp(f, :)';
-    % a2 = norm(X2f);
+    temp = X{1, 1};  X1f = temp(f, :)';
+    temp = X{1, 2};   X2f = temp(f, :)';
     Xf = [X1f; X2f];
     XfNorm = norm(Xf);
     XfPhase = Xf ./ abs(Xf);
@@ -151,22 +133,37 @@ ret = cell(1);
 ret{1} = F.pinv(RET1(:,:));  ret{2} = F.pinv(RET2(:,:));
 ret_w{1} = F.pinv(RET1W); ret_w{2} = F.pinv(RET2W);
 
+%%%===
+ltfatstart
+gt=gabwin('hann',a,M);
+corwin=xcorr(circshift(gt,M/2),circshift(gd,M/2));
+K=size(Gfull,2)*a; % K : IR length
+%corwin= buffer(corwin,K);
+[~,I]=(max(corwin,[],"all"));
+corwin=circshift(corwin,-I+1);  % window for B
+cd = gabdual(corwin,a,M);   % window for B_inv
+
+hre=idgtreal(G,cd,a,M,'timeinv');  % G:射影前のフィルタ
+J = dgt(hre,gd,1,M,'timeinv');
+Hobl = dgt(permute(J,[2 1]),gt,a,M,'timeinv');
+%%%===
+
 for i=1:2
     
     % ret_slra = F.pinv(RET_slra);
-    len_ss = length(ss{i});
+    len_ss = length(s{i});
     len_ret = length(ret{i});
     if len_ss > len_ret
-        ss{i} = ss{i}(1:len_ret);
+        s{i} = s{i}(1:len_ret);
         len_ss = len_ret;
     end
-    [SDR,SIR,SAR,perm] = bss_eval_sources(obs{i}(1:len_ss)', ss{i}');
+    [SDR,SIR,SAR,perm] = bss_eval_sources(obs{i}(1:len_ss)', s{i}');
     fprintf("obs: SDR %2.3f, SIR %2.3f, SAR %2.3f\n", SDR, SIR, SAR)
 
-    [SDR,SIR,SAR,perm] = bss_eval_sources(ret{i}(1:len_ss)', ss{i}');
+    [SDR,SIR,SAR,perm] = bss_eval_sources(ret{i}(1:len_ss)', s{i}');
     fprintf("ret: SDR %2.3f, SIR %2.3f, SAR %2.3f\n", SDR, SIR, SAR)
 
-    [SDR,SIR,SAR,perm] = bss_eval_sources(ret_w{i}(1:len_ss)', ss{i}');
+    [SDR,SIR,SAR,perm] = bss_eval_sources(ret_w{i}(1:len_ss)', s{i}');
     fprintf("ret(w): SDR %2.3f, SIR %2.3f, SAR %2.3f\n", SDR, SIR, SAR)
 
     audiowrite("output/" + sprintf(audiofilename +"_wet.wav", i), obs{i}, fs)
@@ -175,7 +172,7 @@ for i=1:2
     % audiowrite("output/slra.wav", ret_slra, fs)
 end
 
-F.plotReassign(ss{1});title("dry"); 
+F.plotReassign(s{1});title("dry"); 
 saveas(gcf, "result/" + sprintf(audiofilename,1) + "_dry.png")
 F.plotReassign(obs{1}); title("wet"); 
 saveas(gcf, "result/" + sprintf(audiofilename,1) + "_wet.png")

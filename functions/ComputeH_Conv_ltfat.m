@@ -11,7 +11,7 @@ classdef ComputeH_Conv_ltfat
     methods
         % コンストラクタ
         function obj = ComputeH_Conv_ltfat(gt,gd, L, M)
-            b=L/M;
+            b=floor(L/M);
             % obj.wft = fft(circshift(buffer(gt, L), -M/2));
             % obj.gft = fft(circshift(buffer(gd, L), -M/2));
             obj.wft = fft([gt(1:M/2+1); zeros(L-M,1); gt(end-M/2+2:end)]);
@@ -19,7 +19,7 @@ classdef ComputeH_Conv_ltfat
 
             q = 0:M-1;
             GIdx = mod((1:L)' - b*q - 1, L) + 1; % L = length(h)
-            G = obj.gft(GIdx);
+            G = obj.gft(uint16(GIdx)); % 20250315 GIdxを明示的にイントにしないとダブル型になって困るかも？
             % G(:, 2:2:end) = -1 * G(:, 2:2:end); % 偶数列の符号反転
 
             obj.Prod_FwG = obj.wft .* G;
