@@ -55,7 +55,7 @@ for i = 1:num_mic
 end
 obsCat = [obs{1}; obs{2}];
 d = L -1;
-%padding = 10
+padding = 0;
 d = d - padding;
 L = L - padding;
 
@@ -70,7 +70,7 @@ RET_slra = zeros(Fq, sum(l));
 singValRatio = zeros(Fq, 1);
 
 % frequency-wise processing
-for f = 1:Fq
+parfor f = 1:Fq
     temp = X{1, 1};
     X1f = temp(f, :)';
     % a1 = norm(X1f); X1fとX2fの大きさで別々に正規化してたらだめじゃん．

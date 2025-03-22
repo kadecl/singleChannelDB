@@ -4,7 +4,7 @@
 %%% 松山さんの直行射影のアイディアをとりいれる。
 %%% TF領域でのサブバンドごとのAGCD計算により得たインパルス応答を直行射影してIRを復元する。そのあと再度クリーンを計算する
 
-% clear all
+clear
 %% loading
 % audio data loading
 num_piece = 2;
