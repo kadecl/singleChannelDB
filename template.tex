@@ -1,0 +1,166 @@
+%  
+%  信号処理シンポジウム用テンプレート
+%
+
+\documentclass[10pt]{jarticle}
+\usepackage{sips}
+\usepackage{latexsym}
+\usepackage[dvips]{graphicx}
+%% must declare the shorthand \Syl
+
+% もし本文が英文ならば，日本語のタイトルと著者は不要です．
+% その場合，下記の \OnlyEnglishtrue を有効にしてください．
+% 英語のタイトルと著者のみを表示します．
+% ただし，\jtitle, \jauthor, \jaddressの行は削字しないでくだ
+% さい．
+
+\OnlyEnglishtrue
+
+\jtitle{信号処理シンポジウム}
+
+\etitle{Signal Processing Symposium}
+
+\jauthor{
+  通信一郎$^{\dag}$ \hspace{2cm}
+  信号太郎$^{\ddag}$
+}
+
+\eauthor{
+  Natsuki YOSHINO$^{\dag}$ \hspace{2cm}
+  Kohei YATABE$^{\ddag}$ \hspace{2cm}
+  Akira TANAKA$^{\dag}
+}
+
+\jaddress{
+  \dag 電子大学工学部 \\
+  \ddag (株) 電子システム研究所
+}
+
+\eaddress{
+  \dag Hokkaido University \\
+  \ddag Tokyo University of Agriculture and Technology
+}
+
+\begin{document}
+\maketitle
+
+\begin{summary}
+  ここに 300 字程度でアブストラクトを書いてください．
+\end{summary}
+
+\section{Introduction}
+
+\section{Decomvolution in Time Domain}
+% reverberation modeling by linear comvolution in TD
+% 室内音響下では、マイクロフォンで録音された信号は、残響をふくまないドライ信号に対してRoom impulse response (RIR)
+%  $\bm{h}\in\mathbb{R}^d$が線形に畳み込まれたかたちとなる。
+% \begin{equation}
+%   \bm{x} = \bm{s} \ast \bm{h}
+% \end{equation}
+% 畳み込み行列$\mathbf{M}_l(\bm{a})$を導入することで、上式は
+% $\bm{s}\ast \bm{h} = \mathbf{M}_d(\bm{s})$とあらわされる。
+
+% 異なる二つの信号$\bm{s}_1\in\mathbb{R}^{l_1}$, $\bm{s}_2\in\mathbb{R}^{l_2}$に対して同じRIRが畳み込まれた信号が二つあるとしよう：
+% \begin{align}
+%   \bm{x}_1 = \bm{s}_1 \ast \bm{h}\in\mathbb{R}^{n_1}\\
+%   \bm{x}_2 = \bm{s}_2 \ast \bm{h}\in\mathbb{R}^{n_2}.
+% \end{align}
+% このとき、
+% \begin{multline}
+%   \bm{x}_1 \ast \bm{s}_2 = \bm{s}_1 \ast \bm{h} \ast \bm{s}_2 = \bm{x}_2 \ast \bm{s}_1\\
+%   \iff \bm{x}_1 \ast \bm{s}_2 - \bm{x}_2 \ast \bm{s}_1 = \bm{0}\\
+%   \iff [\mathbf{M}_{l_2}(\bm{x}_2)\, \mathbf{M}_{l_2}(\bm{x}_1)]
+%   \begin{bmatrix}\bm{s}_1\\ -\bm{s}_2\end{bmatrix} = \bm{0}
+% \end{multline}
+% なる関係が成立する。
+% 上式に現れる新たな行列は、d-th subresultant Sylvester matrix と名前がついている。
+% Sylvester行列は。。。
+
+
+In room acoustic environments, the signal recorded by a microphone can be modeled as the linear convolution of the room impulse response (RIR) $\bm{h} \in \mathbb{R}^d$ with a dry signal that does not include reverberation:
+\begin{equation}
+  \bm{x} = \bm{s} \ast \bm{h}
+\end{equation}
+
+By introducing the convolution matrix $\mathbf{M}_l(\bm{a})$, the above equation can be rewritten as:
+\[
+\bm{s} \ast \bm{h} = \mathbf{M}_d(\bm{s}) \bm{h}
+\]
+
+Now, suppose we have two different signals $\bm{s}_1 \in \mathbb{R}^{l_1}$ 
+and $\bm{s}_2 \in \mathbb{R}^{l_2}$, both convolved with the same RIR, resulting in:
+\begin{align}
+  \bm{x}_1 = \bm{s}_1 \ast \bm{h} \in \mathbb{R}^{n_1} \\
+  \bm{x}_2 = \bm{s}_2 \ast \bm{h} \in \mathbb{R}^{n_2}
+\end{align}
+
+Then, the following relationship holds:
+\begin{multline}
+  \bm{x}_1 \ast \bm{s}^2 = \bm{s}^1 \ast \bm{h} \ast \bm{s}^2 = \bm{x}^2 \ast \bm{s}^1 \\
+  \iff \bm{x}^1 \ast \bm{s}^2 - \bm{x}^2 \ast \bm{s}^1 = \bm{0} \\
+  \iff [\mathbf{M}_{l_2}(\bm{x}^2)\, \mathbf{M}_{l_2}(\bm{x}^1)]
+  \begin{bmatrix}\bm{s}^1\\ -\bm{s}^2\end{bmatrix} = \bm{0}
+\end{multline}
+
+The matrix appearing in the last row of the above equation is known as 
+the \textit{d-th subresultant Sylvester matrix} $\Syl_d(\bm{x}^1, \bm{x}^2)$.
+If $\bm{s}^1$ and $\bm{s}^2$ are coprime?-meaning they are not convolutions of the same vector?the vector that annihilates $\Syl_d$ is uniquely determined up to scalar  multiplication, as shown in the equation above.
+Therefore, the dry signals $\bm{s}^1$ and $\bm{s}^2$ can be recovered as the right  singular vector corresponding to the unique zero singular value.
+
+However, the Sylvester matrix often becmoes huge size in practical situation.
+For example, if the length of the dry signals and RIR are 1 sec 20kHz of sampling frequency,　the size of Sylvester matrix is X by Y, occupying more than 16GB in double floating point accuracy.
+This quantity is too large for personal computer and users cannot run the program.
+
+\section{}
+In recent years, methods that model reverberation as a linear convolution in the short-time Fourier transform (STFT) domain have shown promising results \cite{wpe, yohana2025}.
+Specifically, letting f denote the frequency bin index, it is assumed that the STFT of the reverberant (wet) signal can be expressed as
+\begin{equation}
+  X_f \approx S_f \ast H_f,
+\end{equation}
+where X_f, S_f, and H_f represent the STFTs of the observed signal, the dry signal, and the room impulse response, respectively.
+
+再度、もし
+\section{出筆上の簡単な注意点}
+
+詳細は執筆要項をご覧下さい．
+
+\subsection{原稿}
+
+原稿は，\TeX を用いて{\bf A4 サイズ}で作成して下さい．
+原稿は，{\bf 6 ページ以内}です．
+6 ページを越えた原稿は受け付けませんので，ご注意下さい．
+\underline{\bf 上下の余白は 25 mm以上に，左右の余白は 17 mm
+  以上}にして下さい． 
+上記の余白には，学会名と通しのページ番号を挿入いたしますので，
+何も記述しないでください．
+
+\subsection{文字の色・大きさ・フォント}
+
+本文には黒色を用いて下さい．
+表題は 16 ポイント，著者名・所属・本文は 10 ポイント以上をお
+使い下さい．
+
+\subsection{図と表，写真}
+
+図と表，写真は，直接，論文原稿中に張り込んでください． 
+カラーの図や写真を使ってもかまいません．
+CD-ROM に収録する論文 PDF は，提出された論文ファイルのカラー
+を保持させた状態で収録します．
+
+\section{原稿提出方法}
+
+\underline{\bf Web ページ上から電子的に提出してください．}
+なお、CD-ROM作成スケジュールの関係上，提出期限後の原稿訂正，
+差し替えには応じかねますので，ご注意下さい．
+
+\section{問い合わせ先}
+論文・出版担当までご連絡ください．
+
+\begin{thebibliography}{99}
+\bibitem{abc} 著者名、``題目''
+  {\em 出典論文誌名}, Vol. XX, No. YY, pp.ZZ1-ZZ2, Dec., 1996
+\bibitem{def} 著者名、``題目''
+  {\em 出典論文誌名}, Vol. XX, No. YY, pp.ZZ1-ZZ2, Dec., 1996
+\end{thebibliography}
+
+\end{document}
