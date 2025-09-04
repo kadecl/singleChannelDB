@@ -1,0 +1,4 @@
+fsResample = 11020
+IR::  BFTLSPACELIBRARY_ChamberAL_11025.wav
+
+AGt, SDR improvement = 6.452Dr, SDR improvement = 12.338EBa, SDR improvement = 2.949EGt, SDR improvement = 7.493EP1, SDR improvement = -5.655EP2, SDR improvement = 6.938

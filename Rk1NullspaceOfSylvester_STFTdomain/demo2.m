@@ -22,7 +22,7 @@ num_mic = 1;
 %[ir{2}, fs(2)] = audioread("../data/BF TL SPACE LIBRARY/Drumbrella/Drumbrella 5'.R.wav");
 
 %% slra options
-useSLRA = 1;
+useSLRA = 0
 useAmplitude = 1;
 avoidNearZeroPolys = 1;
 opt.MaxIterations = 100;
@@ -42,7 +42,7 @@ l = zeros(num_mic, num_piece); % length of deconvoluted signal
 for i = 1:num_mic
     % calcurate the reververation time RT60
     rt(i) = reverb_time(ir, fs);
-    ir = ir(1:fs); ir = ir / norm(ir);
+    ir = ir(1:fs*rt); ir = ir / norm(ir);
     L(i) = size(F(ir), 2);
 
     for j = 1:num_piece
@@ -148,6 +148,7 @@ for i=1:2
     audiowrite("output/" + sprintf(audiofilename +"_slra_ORACLE.wav", i), ret_slra{i}, fs)
 end
 
+%% figure
 F.plotReassign(ss{1});title("dry"); 
 saveas(gcf, "result/" + sprintf(audiofilename,1) + "_dry.png")
 F.plotReassign(obs{1}); title("wet"); 
