@@ -1,4 +1,4 @@
-This is e-pTeX, Version 3.141592653-p4.1.0-230214-2.6 (utf8.euc) (TeX Live 2023) (preloaded format=platex 2024.2.3)  10 JUN 2026 15:47
+This is e-pTeX, Version 3.141592653-p4.1.0-230214-2.6 (utf8.euc) (TeX Live 2023) (preloaded format=platex 2024.2.3)  10 JUN 2026 22:20
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -40,9 +40,9 @@ Package: trig 2021/08/11 v1.11 sin cos tan (DPC)
 ) (/usr/local/texlive/2023/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
-Package graphics Info: Driver file: dvips.def on input line 107.
-(/usr/local/texlive/2023/texmf-dist/tex/latex/graphics-def/dvips.def
-File: dvips.def 2022/09/22 v3.1e Graphics/color driver for dvips
+Package graphics Info: Driver file: dvipdfmx.def on input line 107.
+(/usr/local/texlive/2023/texmf-dist/tex/latex/graphics-def/dvipdfmx.def
+File: dvipdfmx.def 2022/09/22 v5.0m Graphics/color driver for dvipdfmx
 ))
 \Gin@req@height=\dimen159
 \Gin@req@width=\dimen160
@@ -138,90 +138,93 @@ Package bm Info: No bold for \OMX/cmex/m/n, using \pmb.
 Package bm Info: No bold for \U/msa/m/n, using \pmb.
 Package bm Info: No bold for \U/msb/m/n, using \pmb.
 LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 149.
-) (/usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvips.def
-File: l3backend-dvips.def 2023-01-16 L3 backend support: dvips
+) (/usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvipdfmx.def
+File: l3backend-dvipdfmx.def 2023-01-16 L3 backend support: dvipdfmx
+\g__graphics_track_int=\count272
 \l__pdf_internal_box=\box71
-\g__pdf_backend_object_int=\count272
-\l__pdf_backend_content_box=\box72
-\l__pdf_backend_model_box=\box73
-\g__pdf_backend_annotation_int=\count273
-\g__pdf_backend_link_int=\count274
-\g__pdf_backend_link_sf_int=\count275
+\g__pdf_backend_object_int=\count273
+\g__pdf_backend_annotation_int=\count274
+\g__pdf_backend_link_int=\count275
 ) (out/main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for JY1/mc/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for JT1/mc/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 38.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for JY1/mc/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for JT1/mc/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 40.
 (/usr/local/texlive/2023/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 38.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 40.
 (/usr/local/texlive/2023/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
+Overfull \hbox (10.53625pt too wide) in paragraph at lines 40--40
+[][]$[]$[] 
+ []
+
+LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <10> not available
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 41.
+LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <10> not available
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 41.
 LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <12> not available
-(Font)              Font shape `JT1/gt/m/n' tried instead on input line 39.
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 45.
 LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <12> not available
-(Font)              Font shape `JY1/gt/m/n' tried instead on input line 39.
-
-Underfull \hbox (badness 1281) in paragraph at lines 40--41
-\OT1/cmr/m/n/10.95 nal pro-cess-ing, sig-nals recorded via mi-cro-
- []
-
-
-Underfull \hbox (badness 4913) in paragraph at lines 47--47
-[]\OT1/cmr/bx/n/12 Dereverberation via De-con-vo-lu-
- []
-
-LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <10.95> not available
-(Font)              Font shape `JT1/gt/m/n' tried instead on input line 84.
-LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <10.95> not available
-(Font)              Font shape `JY1/gt/m/n' tried instead on input line 84.
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 45.
 [1
 
-
-] [2]
-Overfull \hbox (9.07883pt too wide) detected at line 183
-[]
+]
+LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <10.95> not available
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 101.
+LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <10.95> not available
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 101.
+[2] [3]
+Underfull \hbox (badness 10000) detected at line 212
+ []$[]  \OT1/cmr/bx/n/10.95 z[] \OT1/cmr/m/n/10.95 = [] [] \OML/cmm/m/it/10.95 ^^K [] \OMS/cmsy/m/n/10.95 k\OT1/cmr/bx/n/10.95 z[]\OMS/cmsy/m/n/10.95 k[] \OT1/cmr/m/n/10.95 + [] [][]$ []  
  []
 
+[4]
+File: ../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_dry.png Graphic file (type bmp)
+<../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_dry.png>
+File: ../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_wet.png Graphic file (type bmp)
+<../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_wet.png>
+File: ../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_ret_pad=-2.png Graphic file (type bmp)
+<../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_ret_pad=-2.png>
 
-Overfull \hbox (36.02011pt too wide) detected at line 198
-[]
- []
+LaTeX Warning: Float too large for page by 39.29903pt on input line 252.
 
+File: ../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_8000_1_dry.png Graphic file (type bmp)
+<../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_8000_1_dry.png>
+File: ../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_8000_1_wet.png Graphic file (type bmp)
+<../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_8000_1_wet.png>
+File: ../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_ds_1_ret_pad=-2.png Graphic file (type bmp)
+<../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_ds_1_ret_pad=-2.png>
 
-Overfull \hbox (27.55957pt too wide) detected at line 206
-[]\OT1/cmr/bx/n/10.95 z[] \OT1/cmr/m/n/10.95 = [][](\OT1/cmr/bx/n/10.95 v[]\OT1/cmr/m/n/10.95 ) = [] [] \OT1/cmr/bx/n/10.95 v[]
- []
+LaTeX Warning: Float too large for page by 39.29903pt on input line 262.
 
-[3] [4
-
-] (out/main.aux) ) 
+[5] [6] [7] (out/main.aux) ) 
 Here is how much of TeX's memory you used:
- 2532 strings out of 476693
- 36894 string characters out of 5805374
- 1868209 words of memory out of 5000000
- 22956 multiletter control sequences out of 15000+600000
+ 2581 strings out of 476693
+ 39260 string characters out of 5805374
+ 1861209 words of memory out of 5000000
+ 22995 multiletter control sequences out of 15000+600000
  539648 words of font info for 137 fonts, out of 8000000 for 9000
  929 hyphenation exceptions out of 8191
- 70i,14n,76p,610b,325s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 70i,14n,76p,913b,311s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on out/main.dvi (4 pages, 25044 bytes).
+Output written on out/main.dvi (7 pages, 31060 bytes).

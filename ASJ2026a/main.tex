@@ -7,7 +7,8 @@
 %       2013年6月11日 (Ver.1.2)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\documentclass[11pt,twocolumn]{jarticle} % 11pt(標準)
+% \documentclass[11pt,twocolumn,dvipdfmx]{jarticle} % 11pt(標準)
+\documentclass[11pt,dvipdfmx]{jarticle} % 11pt(標準)
 % \documentclass[10pt,twocolumn]{jarticle} % 10pt(オプション)
 \usepackage{onkoron}
 \usepackage{amsmath,amssymb,nccmath}    % 数式
@@ -30,21 +31,37 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 論文タイトルおよび脚注用の英文を記載する．
 
-\title{時間周波数領域でのブラインド逆畳み込みによる単チャネル残響除去
-\thanks{aaa}
+\title{単チャネルCross-Relation法に基づく時間周波数領域での\\
+逆畳み込みによるブラインド残響除去
+\thanks{本研究は，科学技術振興機構（JST）創発的研究支援事業（JPMJFR****）の支援を受けて実施されたものである．}
 }
 \author{◎吉野夏樹，矢田部浩平（農工大）}
 \begin{document}
 \maketitle
+\begin{abstract}
+  Cross-Relation法を単チャネル設定に応用したブラインド残響除去手法を提案する．時間周波数領域での適用により長大残響時の空間計算量問題を解決する．さらに，時間方向グループスパース正則化により波形の過剰な抑制を回避する．\\
+  \textbf{keywords}: ブラインド残響除去，単一チャネル，Cross-Relation法，スパース最適化，STFT
+\end{abstract}
 \section{はじめに}
-In many practical scenarios of audio signal processing, signals recorded via microphones contain not only the target dry sound—free from reverberation—but also reverberation components that depend on the recording environment. Reverberation is known to degrade the performance of automatic speech recognition systems, and in music production, dry signals are highly valued for their clarity and flexibility in post-processing. Consequently, dereverberation has become a critical topic in acoustic signal processing.
+音響信号処理の多くの実用例において，マイクロホンを介して観測される信号には，残響を含まない目的の直接音だけでなく，録音環境に依存した残響成分が含まれる．残響は自動音声認識システムの性能を低下させることが知られており，また音楽制作の分野においては，直接音信号はその明瞭性や後処理における柔軟性の高さから極めて重視される．したがって，録音環境に関する事前情報が利用できない状況下（ブラインド）での残響除去は，音響信号処理における重要な最優先課題でありながら，困難な問題として位置づけられてきた．
 
-Among various approaches, blind dereverberation—where no prior information about the recording environment is available—remains a particularly challenging and important problem. Recent studies have made progress by restricting the target signal to human speech, thereby allowing the use of prior knowledge about the source characteristics. However, such methods often fail to generalize well to non-speech signals, such as musical instrument sounds, which exhibit fundamentally different acoustic properties.
-Multichannel microphone setups have also been explored, leveraging spatial information to achieve effective dereverberation. While these approaches have shown promising results, single-channel dereverberation still presents significant limitations and room for improvement.
+近年，線形予測残差法（Weighted Prediction Error, WPE）や空間的な冗長性に基づいて単一の音源から複数の音響伝達関数を同定するCross-Relation（CR）法を活用することで，複数マイクロホンでの録音環境における残響除去が進展している．しかし，それらの手法は複数マイクロホン構成を必要とし，さらに人間の音声の非定常性といった，音源に対する統計的の仮定に依存することが多い．その結果，根本的に異なる音響特性を示す楽器音などの非音声信号へ汎化させることは困難であった．
+さらに，残響時間が長大な環境において，時間領域でブラインドシステム同定を実行しようとすると，残響モデルに由来する方程式のサイズが膨大になり，標準的なメモリ容量を容易に超過するという空間計算量の問題も存在していた．
 
-In this study, we address the problem of blind dereverberation under a single-channel setting, without making assumptions about the source signal. Our goal is to develop a method that generalizes across diverse signal types and operates effectively without relying on environmental or source-specific priors
+これらの限界を克服するため，本研究では，単チャネル設定下におけるCR法と双対な定式化に基づく，新しいブラインド残響除去手法を提案する．単一の音源が複数のインパルス応答と畳み込まれる状況を想定する従来のCR法とは異なり，本アプローチでは，単チャネル観測信号から切り出された複数の異なる音源信号の断片に対して，単一の共通するインパルス応答が畳み込まれるという双対なシナリオを仮定する．この定式化を短時間フーリエ変換（STFT）領域で実装することにより，長大残響に伴う空間計算量問題を効果的に解決する．また，音源に関する事前知識に依存することなくロバストな最適化を達成するため，本手法では，時間方向のグループスパース（$L_{2,1}$）正則化を組み込んだ交互方向乗数法（Alternating Direction Method of Multipliers, ADMM）の枠組みを導入する．これにより，信号波形の過剰な抑制を回避する．数値シミュレーションを通じて提案手法の有効性を検証する．
+% In many practical scenarios of audio signal processing, signals recorded via microphones contain not only the target dry sound but also reverberation components that depend on the recording environment. Reverberation is known to degrade the performance of automatic speech recognition systems, and in music production, dry signals are highly valued for their clarity and flexibility in post-processing. Consequently, blind dereverberation—where no prior information about the recording environment is available—remains a critical and challenging topic in acoustic signal processing.
+
+% Recent studies have made progress in multichannel dereverberation by leveraging the Cross-Relation (CR) method, which identifies multiple acoustic transfer functions from a single source based on spatial redundancy. However, conventional CR-based approaches inherently require a multi-microphone setup, and they often rely on strict statistical assumptions about the source, such as the non-stationarity of human speech. Consequently, these methods fail to generalize to single-channel (single-microphone) settings or to non-speech signals like musical instrument sounds, which exhibit fundamentally different acoustic properties.
+
+% Furthermore, executing blind system identification in the time domain for long reverberation times often encounters a prohibitive computational bottleneck due to the massive size of the Sylvester matrix, which can easily exceed standard memory capacities.
+
+% To overcome these limitations, this study proposes a novel blind dereverberation method based on a dual formulation of the Cross-Relation method under a single-channel setting. Unlike the conventional CR method, which assumes a single source convolved with multiple impulse responses, our approach leverages a dual scenario where a single, common impulse response is convolved with multiple segmented source signals extracted from a single-channel observation. By implementing this formulation in the short-time Fourier transform (STFT) domain, we effectively resolve the memory bottleneck associated with long reverberation times.
+
+% To achieve robust optimization without relying on source-specific statistical priors, we introduce an alternating direction method of multipliers (ADMM) framework incorporating time-direction group-sparse regularization, which prevents the over-attenuation of signal waveforms. The effectiveness of the proposed method is validated through numerical simulations.
+
 
 \section{Dereverberation via Deconvolutionin Time-Domain}\label{sec:TD}
+時間領域でのCross-Relation法に基づくマルチチャネルブラインドシステム同定に書き換える．そのあと，信号とインパルス応答の役割を入れ替えても同様の議論ができることから，単チャネル設定においても同様の定式化が可能であることを示す．
 In room acoustic environments, the signal recorded by a microphone can be modeled as the linear convolution of the room impulse response (RIR) $\bm{h} \in \mathbb{R}^d$ with a dry signal that does not include reverberation:
 \begin{equation}
   \bm{x} = \bm{s} \ast \bm{h}.
@@ -63,7 +80,7 @@ and $\bm{s}_2 \in \mathbb{R}^{l_2}$, both convolved with the same RIR, result in
   \bm{x}_1 = \bm{s}_1 \ast \bm{h} \in \mathbb{R}^{n_1} \\
   \bm{x}_2 = \bm{s}_2 \ast \bm{h} \in \mathbb{R}^{n_2}
 \end{align}
-% 本論文では、互いに素なドライ信号に対してRIRが畳み込まれた二つ組の信号を観測とする。ここで、互いに素であるとは、信号の組が何らかの共通する信号との畳み込みになっていないことを指す。
+% 本論文では，互いに素なドライ信号に対してRIRが畳み込まれた二つ組の信号を観測とする．ここで，互いに素であるとは，信号の組が何らかの共通する信号との畳み込みになっていないことを指す．
 
 Then, dereverberation can be done as:
 %\begin{multline}
@@ -119,7 +136,7 @@ This quantity is too large for the personal computer, and users cannot run the p
 \end{equation}
 
 \subsection{最小特異値に対応する特異ベクトルによる近似解法}
-理想的な線形畳み込み条件，かつ信号長が十分である無雑音下においては，クリーン信号ベクトル $\mathbf{u}_f = [\mathbf{s}_f^{1\mathrm{T}}, \mathbf{s}_f^{2\mathrm{T}}]^\mathrm{T}$ はSylvester行列 $\mathbf{A}_f$ の右零空間の基底ベクトルとして一意に獲得できる．
+理想的な線形畳み込み条件，かつ信号長が十分である無雑音下においては，クリーン信号ベクトル $\mathbf{u}_f = [\mathbf{s}_f^{1\mathrm{H}}, \mathbf{s}_f^{2\mathrm{H}}]^\mathrm{H}$ はSylvester行列 $\mathbf{A}_f$ の右零空間の基底ベクトルとして一意に獲得できる．
 
 しかしながら，TF領域での畳み込みモデルはあくまで近似であり，雑音が存在しない理想的な状況においてもスペクトルのもれなどの影響により，式\eqref{eq:sylvester}は厳密な解を持たない．加えて，実際の環境では雑音は不可避的に混入するために$\mathbf{A}_f$ はフルランク行列となってしまい，やはり厳密な意味での零空間は存在しない．
 
@@ -165,12 +182,9 @@ $$\|\mathbf{z}\|_{2,1} = \sum_{g=1}^G \|\mathbf{z}_{\mathbf{g}_g}\|_2$$
 \paragraph{拡張ラグランジュ関数の構成}
 ADMMを適用するため，拡張ラグランジュ関数を構成し，平方完成する:
 \begin{align}
-\mathcal{L}_\rho(\mathbf{u},  \mathbf{z}, \mathbf{y})
-&= \frac{1}{2} \|\mathbf{A}\mathbf{u}\|_2^2 + \alpha \sum_{g=1}^G \|\mathbf{z}_{\mathbf{g}_g}\|_2\nonumber\\
-&\qquad+ \text{Re}\langle \mathbf{y}, \mathbf{u} - \mathbf{z} \rangle + \frac{\rho}{2} \|\mathbf{u} - \mathbf{z}\|_2^2\nonumber\\
+\mathcal{L}_\rho(\mathbf{u},  \mathbf{z}, \mathbf{y}) &= \frac{1}{2} \|\mathbf{A}\mathbf{u}\|_2^2 + \alpha \sum_{g=1}^G \|\mathbf{z}_{\mathbf{g}_g}\|_2+ \text{Re}\langle \mathbf{y}, \mathbf{u} - \mathbf{z} \rangle + \frac{\rho}{2} \|\mathbf{u} - \mathbf{z}\|_2^2\nonumber\\
 % \mathcal{L}_\rho(\mathbf{u}, \mathbf{z}, \mathbf{y}) 
-&= \frac{1}{2} \|\mathbf{A}\mathbf{u}\|_2^2 + \alpha \sum_{g=1}^G \|\mathbf{z}_{\mathbf{g}_g}\|_2 \nonumber\\
-&\qquad+ \frac{\rho}{2} \left\| \mathbf{u} - \mathbf{z} + \frac{\mathbf{y}}{\rho} \right\|_2^2 - \frac{1}{2\rho}\|\mathbf{y}\|_2^2.
+&= \frac{1}{2} \|\mathbf{A}\mathbf{u}\|_2^2 + \alpha \sum_{g=1}^G \|\mathbf{z}_{\mathbf{g}_g}\|_2 \frac{\rho}{2} \left\| \mathbf{u} - \mathbf{z} + \frac{\mathbf{y}}{\rho} \right\|_2^2 - \frac{1}{2\rho}\|\mathbf{y}\|_2^2.
 \end{align}
 ここで$\mathbf{y} \in \mathbb{C}^{2T}$は等式拘束 $\mathbf{u} = \mathbf{z}$ に対するラグランジュ乗数，$\rho > 0$ はペナルティパラメータである．
 
@@ -193,23 +207,24 @@ $\mathbf{z}$ と $\mathbf{y}$ を固定し，$\mathcal{L}_\rho$ を $\mathbf{u}$
 \subparagraph{Step 2}
 
 $\mathbf{u}$ と $\mathbf{y}$ を固定し，$\mathcal{L}_\rho$ を $\mathbf{z}$ について最小化する．
-\begin{align}
-  \mathbf{z}^{(k+1)} = \arg\min_{\mathbf{z}} \alpha \sum_{g=1}^G \|\mathbf{z}_{\mathbf{g}_g}\|_2 + \frac{\rho}{2} \left\| \mathbf{u}^{(k+1)} - \mathbf{z} + \frac{\mathbf{y}^{(k)}}{\rho} \right\|_2^2
-\end{align}
+\begin{multline}
+  \mathbf{z}^{(k+1)} = \arg\min_{\mathbf{z}} \alpha \sum_{g=1}^G \|\mathbf{z}_{\mathbf{g}_g}\|_2  + \frac{\rho}{2} \left\| \mathbf{u}^{(k+1)} - \mathbf{z} + \frac{\mathbf{y}^{(k)}}{\rho} \right\|_2^2
+\end{multline}
 この問題は，各グループ $\mathbf{g}_g$ ごとに完全に独立した問題に分解可能である．$\mathbf{v} = \mathbf{u}^{(k+1)} + \frac{1}{\rho}\mathbf{y}^{(k)}$ と置くことで各グループの最適化問題は次式で表される．
 \begin{align}
 \mathbf{z}_{\mathbf{g}_g}^{(k+1)} = \arg\min_{\mathbf{z}_{\mathbf{g}_g}} \alpha \|\mathbf{z}_{\mathbf{g}_g}\|_2 + \frac{\rho}{2} \|\mathbf{z}_{\mathbf{g}_g} - \mathbf{v}_{\mathbf{g}_g}\|_2^2
 \end{align}
 これは Block Soft-Thresholding の定義そのものであり，解析的に以下の解が得られる．
-\begin{equation}
-  \mathbf{z}_{\mathbf{g}_g}^{(k+1)} = \text{prox}_{\frac{\alpha}{\rho}\|\cdot\|_2}(\mathbf{v}_{\mathbf{g}_g}) = \max\left( 1 - \frac{\alpha}{\rho \|\mathbf{v}_{\mathbf{g}_g}\|_2}, 0 \right) \mathbf{v}_{\mathbf{g}_g}
-\end{equation}
-% - **数理的な意味:** グループのエネルギー $\|\mathbf{v}_{\mathbf{g}_g}\|_2$ が偏角しきい値 $\dfrac{\alpha}{\rho}$ 以下の場合は，グループ丸ごと $\mathbf{0}$ ベクトルになる．しきい値を超えている場合は，そのグループ全体の波形を維持したまま，大きさを一定割合だけ滑らかにshrinkさせる．個々の要素をバラバラに削らないため，ミュージカルノイズの抑制が期待できる．
+\begin{align}
+  \mathbf{z}_{\mathbf{g}_g}^{(k+1)} &= \text{prox}_{\frac{\alpha}{\rho}\|\cdot\|_2}(\mathbf{v}_{\mathbf{g}_g}) \\ &= \max\left( 1 - \frac{\alpha}{\rho \|\mathbf{v}_{\mathbf{g}_g}\|_2}, 0 \right) \mathbf{v}_{\mathbf{g}_g}
+\end{align}
 
 \subparagraph{Step 3}
 
 最後に，等式拘束の残差を用いてラグランジュ乗数を更新する．
-$$\mathbf{y}^{(k+1)} = \mathbf{y}^{(k)} + \rho \left( \mathbf{u}^{(k+1)} - \mathbf{z}^{(k+1)} \right)$$
+\begin{equation}
+\mathbf{y}^{(k+1)} = \mathbf{y}^{(k)} + \rho \left( \mathbf{u}^{(k+1)} - \mathbf{z}^{(k+1)} \right)
+\end{equation}
 % - $\rho \mathbf{I}$  の加算が結果的に正則化として寄与している
 
 \subparagraph{Step 4:スケール拘束（非凸）への対処}
@@ -220,4 +235,32 @@ $$\mathbf{y}^{(k+1)} = \mathbf{y}^{(k)} + \rho \left( \mathbf{u}^{(k+1)} - \math
 \mathbf{z}^{(k+1)} \leftarrow \frac{\mathbf{z}^{(k+1)}}{\|\mathbf{z}^{(k+1)}\|_2}
 \end{equation}
 これにより，自明解をさけながら不要な音漏れだけを排他することを目論む．
+
+\section{数値シミュレーション}
+\subsection{シミュレーションの設定}
+シミュレーションでは，クリーン信号はMIDI音源から生成された楽器音であり，RIRは実測されたものを使用する．観測信号はこれらのクリーン信号とRIRの畳み込みにより生成される．提案法の性能は，クリーン信号と推定された信号のSDRを評価することで評価する．サンプリング周波数は12kHz，STFTのフレーム長は512サンプル，ホップサイズは128サンプルである．グループスパース正則化の強度を制御するハイパーパラメータ $\alpha$ は経験的に$0.01$を選択した．
+\subsection{結果}
+持続する音に対しても，提案法はクリーン信号と比較して高いSDRを達成し，従来のL1正則化のアプローチと比較して過度に抑制されないことが示された．以下にスペクトログラムを示す．
+\begin{figure}
+\centering
+\includegraphics[width=0.8\linewidth]{../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_dry.png}
+\caption{ドライ音のスペクトログラム}
+\includegraphics[width=0.8\linewidth]{../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_wet.png}
+\caption{残響時間$2.6$秒の観測音のスペクトログラム (SDR=$-0.70$ dB)}
+\includegraphics[width=0.8\linewidth]{../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_ret_pad=-2.png}
+\caption{復元音のスペクトログラム (SDR=$9.06$ dB)}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\linewidth]{../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_8000_1_dry.png}
+\caption{ドライ音のスペクトログラム}
+\includegraphics[width=0.8\linewidth]{../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_8000_1_wet.png}
+\caption{残響時間$2.6$秒の観測音のスペクトログラム (SDR=$-2.08$ dB)}
+\includegraphics[width=0.8\linewidth]{../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_ds_1_ret_pad=-2.png}
+\caption{復元音のスペクトログラム (SDR=$7.17$ dB)}
+\end{figure}
+
+\section{結論}
+本研究では，単チャネル設定におけるブラインド残響除去のための新しい手法を提案した．時間周波数領域でのサブバンド畳み込みモデルに基づく定式化と，グループスパース正則化を組み込んだADMMアルゴリズムの導入により，長大残響環境下での空間計算量問題を解決しつつ，信号波形の過剰な抑制を回避した．数値シミュレーションにおいて，提案法はクリーン信号と比較して高いSDRを達成し，従来のSVDベースのアプローチと比較して雑音耐性が向上することが示された．今後の研究では，実録音データへの適用を検討する予定である．
 \end{document}

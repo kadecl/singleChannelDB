@@ -86,10 +86,10 @@ INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
 INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
 INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
 INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
-INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/graphics-def/dvips.def
-INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/graphics-def/dvips.def
-INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/graphics-def/dvips.def
-INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/graphics-def/dvips.def
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/graphics-def/dvipdfmx.def
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/graphics-def/dvipdfmx.def
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/graphics-def/dvipdfmx.def
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/graphics-def/dvipdfmx.def
 INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/amsfonts/amssymb.sty
 INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/amsfonts/amssymb.sty
 INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/amsfonts/amssymb.sty
@@ -197,17 +197,17 @@ INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/tools/bm.sty
 INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/tools/bm.sty
 INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/tools/bm.sty
 INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/graphics/graphicx.sty
-INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvips.def
-INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvips.def
-INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvips.def
-INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvips.def
-INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvips.def
-INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvips.def
-INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvips.def
-INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvips.def
-INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvips.def
-INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvips.def
-INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvips.def
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvipdfmx.def
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvipdfmx.def
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvipdfmx.def
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvipdfmx.def
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvipdfmx.def
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvipdfmx.def
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvipdfmx.def
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvipdfmx.def
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvipdfmx.def
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvipdfmx.def
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvipdfmx.def
 INPUT out/main.aux
 INPUT out/main.aux
 INPUT out/main.aux
@@ -289,13 +289,13 @@ INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm5
 INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/public/cm/cmbx5.tfm
 INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmmib5.tfm
 INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy5.tfm
+OUTPUT out/main.dvi
+INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/public/cm/cmti10.tfm
+INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/ptex-fonts/standard/tgoth10.tfm
+INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/ptex-fonts/standard/tmin8.tfm
 INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/ptex-fonts/standard/tmin9.tfm
 INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/ptex-fonts/standard/min9.tfm
 INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/public/cm/cmr9.tfm
-INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/public/cm/cmti10.tfm
-INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/ptex-fonts/standard/tgoth10.tfm
-OUTPUT out/main.dvi
-INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/ptex-fonts/standard/tmin8.tfm
 INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/public/cm/cmmi9.tfm
 INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/public/cm/cmsy9.tfm
 INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex9.tfm
@@ -306,4 +306,28 @@ INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmmib
 INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy9.tfm
 INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/ptex-fonts/standard/goth9.tfm
 INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/ptex-fonts/standard/tmin6.tfm
+INPUT ../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_dry.png
+INPUT ../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_dry.png
+INPUT ../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_dry.png
+INPUT extractbb -B cropbox -O ../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_dry.png
+INPUT ../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_wet.png
+INPUT ../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_wet.png
+INPUT ../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_wet.png
+INPUT extractbb -B cropbox -O ../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_wet.png
+INPUT ../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_ret_pad=-2.png
+INPUT ../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_ret_pad=-2.png
+INPUT ../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_ret_pad=-2.png
+INPUT extractbb -B cropbox -O ../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_ret_pad=-2.png
+INPUT ../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_8000_1_dry.png
+INPUT ../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_8000_1_dry.png
+INPUT ../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_8000_1_dry.png
+INPUT extractbb -B cropbox -O ../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_8000_1_dry.png
+INPUT ../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_8000_1_wet.png
+INPUT ../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_8000_1_wet.png
+INPUT ../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_8000_1_wet.png
+INPUT extractbb -B cropbox -O ../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_8000_1_wet.png
+INPUT ../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_ds_1_ret_pad=-2.png
+INPUT ../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_ds_1_ret_pad=-2.png
+INPUT ../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_ds_1_ret_pad=-2.png
+INPUT extractbb -B cropbox -O ../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_ds_1_ret_pad=-2.png
 INPUT out/main.aux

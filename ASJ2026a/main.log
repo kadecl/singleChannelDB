@@ -1,4 +1,4 @@
-This is e-pTeX, Version 3.141592653-p4.1.0-230214-2.6 (utf8.euc) (TeX Live 2023) (preloaded format=platex 2024.2.3)  10 JUN 2026 15:37
+This is e-pTeX, Version 3.141592653-p4.1.0-230214-2.6 (utf8.euc) (TeX Live 2023) (preloaded format=platex 2024.2.3)  10 JUN 2026 20:47
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -47,10 +47,10 @@ Package: trig 2021/08/11 v1.11 sin cos tan (DPC)
 (/usr/local/texlive/2023/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
-Package graphics Info: Driver file: dvips.def on input line 107.
+Package graphics Info: Driver file: dvipdfmx.def on input line 107.
 
-(/usr/local/texlive/2023/texmf-dist/tex/latex/graphics-def/dvips.def
-File: dvips.def 2022/09/22 v3.1e Graphics/color driver for dvips
+(/usr/local/texlive/2023/texmf-dist/tex/latex/graphics-def/dvipdfmx.def
+File: dvipdfmx.def 2022/09/22 v5.0m Graphics/color driver for dvipdfmx
 ))
 \Gin@req@height=\dimen159
 \Gin@req@width=\dimen160
@@ -156,31 +156,115 @@ Package bm Info: No bold for \U/msa/m/n, using \pmb.
 Package bm Info: No bold for \U/msb/m/n, using \pmb.
 LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 149.
 )
+(/usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvipdfmx.def
+File: l3backend-dvipdfmx.def 2023-01-16 L3 backend support: dvipdfmx
+\g__graphics_track_int=\count272
+\l__pdf_internal_box=\box71
+\g__pdf_backend_object_int=\count273
+\g__pdf_backend_annotation_int=\count274
+\g__pdf_backend_link_int=\count275
+) (./main.aux)
+\openout1 = `main.aux'.
 
-! LaTeX Error: Missing \begin{document}.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for JY1/mc/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for JT1/mc/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 39.
+
+ (/usr/local/texlive/2023/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 39.
+
+
+(/usr/local/texlive/2023/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <12> not available
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 40.
+LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <12> not available
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 40.
+LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <10.95> not available
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 42.
+LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <10.95> not available
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 42.
+
+Underfull \hbox (badness 4913) in paragraph at lines 62--62
+[]\OT1/cmr/bx/n/12 Dereverberation via De-con-vo-lu-
+ []
+
+[1
+
+
+] [2]
+Overfull \hbox (9.07883pt too wide) detected at line 198
+[]
+ []
+
+[3]
+File: ../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_dry.png Graphic 
+file (type bmp)
+<../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_dry.png>
+File: ../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_wet.png Graphic 
+file (type bmp)
+<../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_wet.png>
+File: ../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_ret_pad=-2.png G
+raphic file (type bmp)
+<../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_ret_pad=-2.png>
+File: ../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_8000_1_dr
+y.png Graphic file (type bmp)
+<../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_8000_1_dry.png
+>
+File: ../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_8000_1_we
+t.png Graphic file (type bmp)
+<../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_8000_1_wet.png
+>
+
+
+LaTeX Warning: File `../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav
+_mono_8000_1_ret_pad=-2.png' not found on input line 261.
+
+
+! LaTeX Error: Cannot determine size of graphic in ../Rk1NullspaceOfSylvester_S
+TFTdomain/result/Goldberg_clav_mono_8000_1_ret_pad=-2.xbb (no BoundingBox).
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.34 \thanks{aaa}
-                 
+l.261 ...Goldberg_clav_mono_8000_1_ret_pad=-2.png}
+                                                  
 ? 
 ! Emergency stop.
  ...                                              
                                                   
-l.34 \thanks{aaa}
-                 
-You're in trouble here.  Try typing  <return>  to proceed.
+l.261 ...Goldberg_clav_mono_8000_1_ret_pad=-2.png}
+                                                  
+Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
 
  
 Here is how much of TeX's memory you used:
- 2162 strings out of 476693
- 29151 string characters out of 5805374
- 1842209 words of memory out of 5000000
- 22651 multiletter control sequences out of 15000+600000
- 516921 words of font info for 52 fonts, out of 8000000 for 9000
+ 2640 strings out of 476693
+ 43371 string characters out of 5805374
+ 1863209 words of memory out of 5000000
+ 23035 multiletter control sequences out of 15000+600000
+ 539648 words of font info for 137 fonts, out of 8000000 for 9000
  929 hyphenation exceptions out of 8191
- 70i,0n,76p,313b,36s stack positions out of 10000i,1000n,20000p,200000b,200000s
-No pages of output.
+ 70i,14n,76p,846b,327s stack positions out of 10000i,1000n,20000p,200000b,200000s
+Output written on main.dvi (3 pages, 24564 bytes).

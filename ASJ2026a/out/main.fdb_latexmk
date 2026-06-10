@@ -1,11 +1,17 @@
 # Fdb version 4
-["dvipdf"] 1781074064 "out/main.dvi" "out/main.pdf" "out/main" 1781074064 0
-  "out/main.dvi" 1781074064 25044 090d80e5945a1442feb22a9bb881359d "latex"
+["dvipdf"] 1781097621 "out/main.dvi" "out/main.pdf" "out/main" 1781097622 0
+  "out/main.dvi" 1781097621 31060 eb2bb1ba294a03ad02da0f6eb512f645 "latex"
   (generated)
   "out/main.pdf"
   (rewritten before read)
-["latex"] 1781074064 "/Users/itsukiyashima/Documents/MATLAB/singleChannelDB/ASJ2026a/main.tex" "out/main.dvi" "main" 1781074064 0
-  "/Users/itsukiyashima/Documents/MATLAB/singleChannelDB/ASJ2026a/main.tex" 1781074063 19727 67259b4236f128940a68c061bdfd6523 ""
+["latex"] 1781097620 "/Users/itsukiyashima/Documents/MATLAB/singleChannelDB/ASJ2026a/main.tex" "out/main.dvi" "main" 1781097622 0
+  "../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_dry.png" 1781090913 92418 4c5308c713a6d86bff6ae8a4825a1dba ""
+  "../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_ret_pad=-2.png" 1781090913 98717 64f2081cba041997332de6b93c09463c ""
+  "../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_wet.png" 1781090913 122227 0538fa0e41e9d7073e425179f3513e92 ""
+  "../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_8000_1_dry.png" 1781078112 101658 317efff052381fd83c5b5d250c182208 ""
+  "../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_8000_1_wet.png" 1781078112 132660 497fc30e36f69cc7dfc06ae03c034910 ""
+  "../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_ds_1_ret_pad=-2.png" 1781091912 101609 8d688c19ce62f1ed5673aacab78f8637 ""
+  "/Users/itsukiyashima/Documents/MATLAB/singleChannelDB/ASJ2026a/main.tex" 1781097620 26934 e38fe0d379d7d7573d75aea7b59ec57b ""
   "/usr/local/texlive/2023/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/tfm/ptex-fonts/standard/goth10.tfm" 1463434352 1196 5981e79c37b2cfd27b3612a6783cd4b6 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/tfm/ptex-fonts/standard/goth6.tfm" 1463434352 1196 977af188465e721f1f65facb66282510 ""
@@ -74,12 +80,12 @@
   "/usr/local/texlive/2023/texmf-dist/tex/latex/amsmath/amsopn.sty" 1654720880 4474 f04cd1cc7bd76eb033e6fb12eb6a0d77 ""
   "/usr/local/texlive/2023/texmf-dist/tex/latex/amsmath/amstext.sty" 1654720880 2444 70065bddd85997dc1fd0bb7ae634e5fa ""
   "/usr/local/texlive/2023/texmf-dist/tex/latex/graphics-cfg/graphics.cfg" 1465944070 1224 978390e9c2234eab29404bc21b268d1e ""
-  "/usr/local/texlive/2023/texmf-dist/tex/latex/graphics-def/dvips.def" 1663965824 6282 3d1fff8973f8803fd81ea577dda4f3ef ""
+  "/usr/local/texlive/2023/texmf-dist/tex/latex/graphics-def/dvipdfmx.def" 1663965824 12296 04d6453afafd99986deba3629756d9ec ""
   "/usr/local/texlive/2023/texmf-dist/tex/latex/graphics/graphics.sty" 1654720880 18387 8f900a490197ebaf93c02ae9476d4b09 ""
   "/usr/local/texlive/2023/texmf-dist/tex/latex/graphics/graphicx.sty" 1654720880 8010 a8d949cbdbc5c983593827c9eec252e1 ""
   "/usr/local/texlive/2023/texmf-dist/tex/latex/graphics/keyval.sty" 1654720880 2671 7e67d78d9b88c845599a85b2d41f2e39 ""
   "/usr/local/texlive/2023/texmf-dist/tex/latex/graphics/trig.sty" 1654720880 4023 293ea1c16429fc0c4cf605f4da1791a9 ""
-  "/usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvips.def" 1673989714 36094 f50bbd0ac1e5d89f3bafd820930998cd ""
+  "/usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-dvipdfmx.def" 1673989714 30501 3598a65dcfed333b0bc82f80315f9831 ""
   "/usr/local/texlive/2023/texmf-dist/tex/latex/ncctools/nccmath.sty" 1530651749 14585 b9ec0dfe305551751c94c3d416a3bea2 ""
   "/usr/local/texlive/2023/texmf-dist/tex/latex/tools/bm.sty" 1654720880 13231 b52297489a0e9d929aae403417d92a02 ""
   "/usr/local/texlive/2023/texmf-dist/tex/platex/base/jarticle.cls" 1601501154 25873 fd34d08164a3ea7afd6bc7fe99629a3d ""
@@ -87,9 +93,9 @@
   "/usr/local/texlive/2023/texmf-dist/web2c/texmf.cnf" 1677365944 40745 87bb86a62d462f93a1efc6b0c65c872e ""
   "/usr/local/texlive/2023/texmf-var/web2c/eptex/platex.fmt" 1706938642 7883690 e6ba719e215b5707462b28b33f1f0669 ""
   "/usr/local/texlive/2023/texmf.cnf" 1678822455 577 1b2b1af17af2508fb20dd85783af4050 ""
-  "main.tex" 1781074063 19727 67259b4236f128940a68c061bdfd6523 ""
+  "main.tex" 1781097620 26934 e38fe0d379d7d7573d75aea7b59ec57b ""
   "onkoron.sty" 1363753942 6474 8271fe2a37a697086da3a8c00ca50905 ""
-  "out/main.aux" 1781074064 1802 36ec3078a8629e0a31c8fbf10a45faac "latex"
+  "out/main.aux" 1781097621 3191 19344d82f5110fb971e8a9787b422f7b "latex"
   (generated)
   "out/main.aux"
   "out/main.dvi"
