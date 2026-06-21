@@ -5,13 +5,16 @@ F = DGTtool("windowLength", 512, "windowShift", 128);
 speech = filter(b, a, speech);
 
 ir = audioread(ir_data);
-ir = ir(1 : Fs*0.37);
+% ir = ir(1 : Fs*0.37);
 
 Fq = size(F(speech), 1);
 N = size(F(speech), 2);
 reverb_speech = F(cconv(speech, ir, length(speech)));
 
-M = 50;
+IR = F(ir);
+M = size(IR, 2);
+% M = 50;
+
 rho = 400;
 speech_restore = zeros(Fq, N);
 
