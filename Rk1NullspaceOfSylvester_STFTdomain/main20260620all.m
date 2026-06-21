@@ -6,15 +6,19 @@ F = DGTtool("windowLength", 512, "windowShift", 128);
 
 % 評価対象のインパルス応答（IR）のリスト
 ir_paths = { ...
-    "../data/wavIR/IR_room_06s.wav", ... % RT60 = 0.6
-    "../data/wavIR/01.0s Villa Bathroom-OST.wav", ... % RT60 = 1.0 (0.9想定)
-    "../data/wavIR/IR_chamber_13s.wav" ... % RT60 = 1.3
+    %"logic03sWoodenBooth8000.wav", ...
+    "../data/wavIR/IR_sweep_15s_45Hzto22kHz_FS16kHz.v370.wav", ... 
+    "../data/wavIR/01.0s Villa Bathroom-OST.wav", ... 
+    "../data/BF TL SPACE LIBRARY/Drumbrella/Drumbrella 5'.R.wav"...
 };
 num_ir = length(ir_paths);
 
 % 親フォルダの指定とサブフォルダ（1〜10）の定義
-base_dir = "input_all";
-sub_dirs = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
+base_dir = "input/inst";
+sub_dirs = dir(base_dir);
+dnames = {sub_dirs.name};
+isDot = startsWith(dnames, '.');   % 先頭が '.' のものを検出
+sub_dirs = sub_dirs(~isDot);
 num_sets = length(sub_dirs);
 
 fprintf('実験開始: IR数 = %d, 総データセット（フォルダ）数 = %d\n', num_ir, num_sets);
@@ -54,15 +58,15 @@ for ir_idx = 1:num_ir
     Lir_proc = Lir + padding;
 
     for s_idx = 1:num_sets
-        current_sub_dir = fullfile(base_dir, sub_dirs{s_idx});
+        current_sub_dir = fullfile(base_dir, sub_dirs(s_idx).name);
         fpaths = dir(fullfile(current_sub_dir, '*.wav'));
         
         if length(fpaths) < 2
-            warning('フォルダ「%s」内にWAVファイルが2つ未満のためスキップします。', sub_dirs{s_idx});
+            warning('フォルダ「%s」内にWAVファイルが2つ未満のためスキップします。', sub_dirs(s_idx).name);
             continue;
         end
         
-        fprintf(' -> フォルダ 「%s」を処理中...\n', sub_dirs{s_idx});
+        fprintf(' -> フォルダ 「%s」を処理中...\n', sub_dirs(s_idx).name);
         
         % ドライ音の読み込みとノイズ付加
         ss = cell(2,1);
