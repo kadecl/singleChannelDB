@@ -3,14 +3,13 @@ clear; clc; close all;
 
 % DGT tool の初期化
 F = DGTtool("windowLength", 512, "windowShift", 128);
+fs_glob = 11025;
 
 % 評価対象のインパルス応答（IR）のリスト
-ir_paths = { ...
-    %"logic03sWoodenBooth8000.wav", ...
-    "../data/wavIR/IR_sweep_15s_45Hzto22kHz_FS16kHz.v370.wav", ... 
-    "../data/wavIR/01.0s Villa Bathroom-OST.wav", ... 
-    "../data/BF TL SPACE LIBRARY/Drumbrella/Drumbrella 5'.R.wav"...
-};
+ir_paths = dir("./ir");
+isnt_ir_file = {ir_paths.isdir};
+isnt_ir_file = cell2mat(isnt_ir_file);
+ir_paths = {ir_paths(~isnt_ir_file).name}
 num_ir = length(ir_paths);
 
 % 親フォルダの指定とサブフォルダ（1〜10）の定義
@@ -38,18 +37,18 @@ time_WPE  = zeros(num_sets, num_ir);
 rt60_labels = cell(1, num_ir);
 
 %% 2. 処理ループ（IR × サブフォルダ）
-for ir_idx = 1:num_ir
+for ir_idx = 1:1
     % IRの読み込みとサンプリング・カット処理
     current_ir_path = ir_paths{ir_idx};
     [ir_raw, fs] = audioread(current_ir_path);
     
-    rt = reverb_time(ir_raw, fs);
+    rt = reverb_time(ir_raw, fs_glob);
     rt60_labels{ir_idx} = sprintf('RT60 = %.1fs', rt);
     fprintf('\n=========================================\n');
     fprintf('評価中: IR %d/%d (%s)\n', ir_idx, num_ir, rt60_labels{ir_idx});
     fprintf('=========================================\n');
     
-    ir = ir_raw(1:floor(fs*rt)); 
+    ir = ir_raw(1:floor(fs_glob*rt)); 
     ir = ir(:) / norm(ir);
     IR = F(ir);
     Lir = size(IR, 2);
@@ -90,7 +89,7 @@ for ir_idx = 1:num_ir
             
             % 後段のLifting法へ渡す用の一時ファイル（フォルダ直下に保存して競合回避）
             tmp_speech_paths{i} = fullfile(current_sub_dir, sprintf('tmp_speech_ch%d.wav', i));
-            audiowrite(tmp_speech_paths{i}, ss{i}, fs);
+            audiowrite(tmp_speech_paths{i}, ss{i}, fs_glob);
         end
         
         Fq = size(X{1}, 1);
@@ -123,7 +122,7 @@ for ir_idx = 1:num_ir
         ret_lift = cell(2,1);
         tic
         for i = 1:2
-            RET_lift_sub = dereverb(tmp_speech_paths{i}, current_ir_path);
+            RET_lift_sub = dereverb(X{i}, Lir);
             ret_lift{i} = F.pinv(RET_lift_sub);
         end
         time_Lift(s_idx, ir_idx) = toc;
@@ -132,7 +131,7 @@ for ir_idx = 1:num_ir
         ret_wpe = cell(2,1);
         tic
         for i = 1:2
-            ret_wpe{i} = WPE1c_wrapper(obs{i}, fs);
+            ret_wpe{i} = WPE1c_wrapper(obs{i}, fs_glob, F, Lir);
         end
         time_WPE(s_idx, ir_idx) = toc;
         

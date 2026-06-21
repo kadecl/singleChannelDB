@@ -1,4 +1,4 @@
-function y_out = WPE1c_wrapper(x_in, fs)
+function y_out = WPE1c_wrapper(x_in, fs, F, Lir)
 % WPE_MONAURAL_WRAPPER  NTT製PコードWPEを単一チャネル(モノラル)信号に対して実行する
 %
 % 入力:
@@ -30,10 +30,10 @@ function y_out = WPE1c_wrapper(x_in, fs)
     fprintf(fid, 'opt_blk_sz = 1;\n');
     
     % STFTパラメータ
-    fprintf(fid, 'analy_param = struct(''win_size'', 512, ''shift_size'', 128, ''win'', hanning(512));\n');
+    fprintf(fid, 'analy_param = struct(''win_size'', %d, ''shift_size'', %d, ''win'', hanning(512));\n', F.FFTnum, F.shift);
     
     % 予測フィルタの設定 [タップ数; 予測遅延; 上限周波数]
-    fprintf(fid, 'channel_setup = [15; 3; inf];\n'); 
+    fprintf(fid, 'channel_setup = [%d; 3; inf];\n', Lir); 
     
     % 推定コンフィグ (p_channelはモノラルなので 1 のみ)
     fprintf(fid, 'ssd_param = struct(''channel_setup'', channel_setup, ''p_channel'', 1, ''speech_order'', 20);\n');
