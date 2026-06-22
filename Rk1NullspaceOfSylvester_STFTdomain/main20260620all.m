@@ -41,15 +41,21 @@ for ir_idx = 1:num_ir
     % IRの読み込みとサンプリング・カット処理
     current_ir_path = ir_paths{ir_idx};
     [ir_raw, fs] = audioread(current_ir_path);
+    ir = monoralize(ir_raw);
+    % if fs ~= fs_glob
+    %     ir_raw = resample(ir_raw, fs_glob, fs);
+    % end
     
-    rt = reverb_time(ir_raw, fs_glob);
+    rt = reverb_time(ir, fs_glob);
     rt60_labels{ir_idx} = sprintf('RT60 = %.1fs', rt);
     fprintf('\n=========================================\n');
     fprintf('評価中: IR %d/%d (%s)\n', ir_idx, num_ir, rt60_labels{ir_idx});
     fprintf('=========================================\n');
     
-    ir = ir_raw(1:floor(fs_glob*rt)); 
-    ir = ir(:) / norm(ir);
+    if fs_glob*rt < length(ir)
+        ir = ir(1:floor(fs_glob*rt));
+    end
+    ir = ir(:) / max(abs(ir));
     IR = F(ir);
     Lir = size(IR, 2);
     
@@ -78,14 +84,13 @@ for ir_idx = 1:num_ir
             audiofilename = fullfile(current_sub_dir, fpaths(i).name);
             [temp, fs_audio] = audioread(audiofilename);
             
-            % 擬似的なノイズ付加
-            noise = randn(size(temp(:,1)));
-            noise = 0.1 * noise * norm(temp(:,1)) / norm(noise);
-            ss{i} = temp(:,1) + noise;
-            
             % 残響の畳み込み
             obs{i} = conv(ss{i}, ir);
             X{i} = F(obs{i});
+
+            % additive noise
+            noise = randn(size(obs{i}));
+            noise = 0.1 * noise * norm(temp(:,i)) / norm(noise);
             
             % 後段のLifting法へ渡す用の一時ファイル（フォルダ直下に保存して競合回避）
             tmp_speech_paths{i} = fullfile(current_sub_dir, sprintf('tmp_speech_ch%d.wav', i));
