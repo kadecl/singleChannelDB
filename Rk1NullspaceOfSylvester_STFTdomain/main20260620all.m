@@ -9,7 +9,7 @@ fs_glob = 11025;
 ir_paths = dir("./ir");
 isnt_ir_file = {ir_paths.isdir};
 isnt_ir_file = cell2mat(isnt_ir_file);
-ir_paths = {ir_paths(~isnt_ir_file).name}
+ir_paths = "./ir/" + {ir_paths(~isnt_ir_file).name}
 num_ir = length(ir_paths);
 
 % 親フォルダの指定とサブフォルダ（1〜10）の定義
@@ -37,7 +37,7 @@ time_WPE  = zeros(num_sets, num_ir);
 rt60_labels = cell(1, num_ir);
 
 %% 2. 処理ループ（IR × サブフォルダ）
-for ir_idx = 1:1
+for ir_idx = 1:num_ir
     % IRの読み込みとサンプリング・カット処理
     current_ir_path = ir_paths{ir_idx};
     [ir_raw, fs] = audioread(current_ir_path);
