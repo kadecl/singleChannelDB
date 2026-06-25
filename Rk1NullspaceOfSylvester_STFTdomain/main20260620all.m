@@ -6,11 +6,12 @@ F = DGTtool("windowLength", 512, "windowShift", 128);
 fs_glob = 11025;
 
 % 評価対象のインパルス応答（IR）のリスト
-ir_paths = dir("./ir");
+ir_paths = dir("./ir/*.wav");
 isnt_ir_file = {ir_paths.isdir};
 isnt_ir_file = cell2mat(isnt_ir_file);
 ir_paths = "./ir/" + {ir_paths(~isnt_ir_file).name}
 num_ir = length(ir_paths);
+for i=1:num_ir, ir = audioread(ir_paths(i)); disp(reverb_time(ir, 11025)); end
 
 % 親フォルダの指定とサブフォルダ（1〜10）の定義
 base_dir = "input/inst";
@@ -226,3 +227,11 @@ fprintf('\n---- 平均処理時間 (1セットあたり) ----\n')
 fprintf('Proposed CR : %.4f 秒\n', mean(time_CR(:)));
 fprintf('Lifting     : %.4f 秒\n', mean(time_Lift(:)));
 fprintf('Monaural WPE: %.4f 秒\n', mean(time_WPE(:)));
+
+st = dbstack('-completenames');
+[folderPath, fileName, ext] = fileparts(st(1).file);
+resultFileName = strcat(fileName,  '_result');
+saveFilePath = fullfile(folderPath, [resultFileName, '.mat']);
+data = rand(100, 1);
+save(saveFilePath, 'data');
+fprintf('結果を %s に保存しました。\n', saveFilePath);
