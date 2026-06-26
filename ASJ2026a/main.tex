@@ -7,14 +7,16 @@
 %       2013年6月11日 (Ver.1.2)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \documentclass[11pt,twocolumn,dvipdfmx]{jarticle} % 11pt(標準)
-\documentclass[11pt,dvipdfmx]{jarticle} % 11pt(標準)
-% \documentclass[10pt,twocolumn]{jarticle} % 10pt(オプション)
+\documentclass[10pt,twocolumn,dvipdfmx]{jarticle} % 11pt(標準)
+%\documentclass[11pt,dvipdfmx]{jarticle} % 11pt(標準)
+%\documentclass[10pt,twocolumn]{jarticle} % 10pt(オプション)
 \usepackage{onkoron}
 \usepackage{amsmath,amssymb,nccmath}    % 数式
 \usepackage{bm}
 \usepackage{graphicx} 
-
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{booktabs}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 参考文献の引用が [3,6,2,1] -> [1-3,6] になります．
@@ -31,236 +33,235 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 論文タイトルおよび脚注用の英文を記載する．
 
-\title{単チャネルCross-Relation法に基づく時間周波数領域ブラインド残響除去
-\thanks{本研究は，科学技術振興機構（JST）創発的研究支援事業（JPMJFR****）の支援を受けて実施されたものである．}
+\title{
+単チャネルCross-Relation法に基づく時間周波数領域ブラインド残響除去
+%音源振動を補助情報とする時間領域単チャネル残響除去
+\thanks{
+  本研究は，科学技術振興機構（JST）創発的研究支援事業（JPMJFR****）の支援を受けて実施されたものである．
+  }
 }
 \author{◎吉野夏樹，矢田部浩平（農工大）}
 \begin{document}
 \maketitle
-\begin{abstract}
-複数マイクの信号から残響特性を求めるCross-Relation法に着目する．音源と残響の数学的な関係性を反転させ単一チャネルへ応用し，音源の情報に依存せずに残響を除去する手法を提案する．
-(94 letters)\\
-  \textbf{keywords}: ブラインド残響除去，単一チャネル，Cross-Relation法，時間周波数解析
-\end{abstract}
+% \begin{abstract}
+%   単チャネルCross-Relation法に基づく時間周波数領域ブラインド残響除去
+% 複数マイクの信号から残響特性を求めるCross-Relation法に着目する．音源と残響の数学的な関係性を反転させ，単一チャネル設定へ応用し，音源の情報に依存せずに室内残響を除去する手法を提案する．
+% (98 letters)\\
+%   \textbf{keywords}: ブラインド残響除去，単一チャネル，Cross-Relation法，時間周波数解析，システム同定
+% \end{abstract}
 \section{はじめに}
-音響信号処理の多くの実用例において，マイクロホンを介して観測される信号には，残響を含まない目的の直接音だけでなく，録音環境に依存した残響成分が含まれる．残響は自動音声認識システムの性能を低下させることが知られており，また音楽制作の分野においては，直接音信号はその明瞭性や後処理における柔軟性の高さから極めて重視される．したがって，録音環境に関する事前情報が利用できない状況下（ブラインド）での残響除去は，音響信号処理における重要な最優先課題でありながら，困難な問題として位置づけられてきた．
+%音響信号処理の多くの実用例において，マイクロホンを介して観測される信号には，残響を含まない目的の直接音だけでなく，録音環境に依存した残響成分が含まれる．
+%実環境で収録された音響信号は不可避的に残響を含む．残響は自動音声認識システムの性能を低下させることが知られており，また音楽制作の分野においては，直接音信号はその明瞭性や後処理における柔軟性の高さから重視される．したがって，録音環境に関する事前情報が利用できない状況下（ブラインド）での残響除去は，音響信号処理における重要な課題である．
 
-近年，線形予測残差法（Weighted Prediction Error, WPE）や空間的な冗長性に基づいて単一の音源から複数の音響伝達関数を同定するCross-Relation（CR）法を活用することで，複数マイクロホンでの録音環境における残響除去が進展している．しかし，それらの手法は複数マイクロホン構成を必要とし，さらに人間の音声の非定常性といった，音源に対する統計的の仮定に依存することが多い．その結果，根本的に異なる音響特性を示す楽器音などの非音声信号へ汎化させることは困難であった．
-さらに，残響時間が長大な環境において，時間領域でブラインドシステム同定を実行しようとすると，残響モデルに由来する方程式のサイズが膨大になり，標準的なメモリ容量を容易に超過するという空間計算量の問題も存在していた．
-
-これらの限界を克服するため，本研究では，単チャネル設定下におけるCR法と双対な定式化に基づく，新しいブラインド残響除去手法を提案する．単一の音源が複数のインパルス応答と畳み込まれる状況を想定する従来のCR法とは異なり，本アプローチでは，単チャネル観測信号から切り出された複数の異なる音源信号の断片に対して，単一の共通するインパルス応答が畳み込まれるという双対なシナリオを仮定する．この定式化を短時間フーリエ変換（STFT）領域で実装することにより，長大残響に伴う空間計算量問題を効果的に解決する．また，音源に関する事前知識に依存することなくロバストな最適化を達成するため，本手法では，時間方向のグループスパース（$L_{2,1}$）正則化を組み込んだ交互方向乗数法（Alternating Direction Method of Multipliers, ADMM）の枠組みを導入する．これにより，信号波形の過剰な抑制を回避する．数値シミュレーションを通じて提案手法の有効性を検証する．
-% In many practical scenarios of audio signal processing, signals recorded via microphones contain not only the target dry sound but also reverberation components that depend on the recording environment. Reverberation is known to degrade the performance of automatic speech recognition systems, and in music production, dry signals are highly valued for their clarity and flexibility in post-processing. Consequently, blind dereverberation—where no prior information about the recording environment is available—remains a critical and challenging topic in acoustic signal processing.
-
-% Recent studies have made progress in multichannel dereverberation by leveraging the Cross-Relation (CR) method, which identifies multiple acoustic transfer functions from a single source based on spatial redundancy. However, conventional CR-based approaches inherently require a multi-microphone setup, and they often rely on strict statistical assumptions about the source, such as the non-stationarity of human speech. Consequently, these methods fail to generalize to single-channel (single-microphone) settings or to non-speech signals like musical instrument sounds, which exhibit fundamentally different acoustic properties.
-
-% Furthermore, executing blind system identification in the time domain for long reverberation times often encounters a prohibitive computational bottleneck due to the massive size of the Sylvester matrix, which can easily exceed standard memory capacities.
-
-% To overcome these limitations, this study proposes a novel blind dereverberation method based on a dual formulation of the Cross-Relation method under a single-channel setting. Unlike the conventional CR method, which assumes a single source convolved with multiple impulse responses, our approach leverages a dual scenario where a single, common impulse response is convolved with multiple segmented source signals extracted from a single-channel observation. By implementing this formulation in the short-time Fourier transform (STFT) domain, we effectively resolve the memory bottleneck associated with long reverberation times.
-
-% To achieve robust optimization without relying on source-specific statistical priors, we introduce an alternating direction method of multipliers (ADMM) framework incorporating time-direction group-sparse regularization, which prevents the over-attenuation of signal waveforms. The effectiveness of the proposed method is validated through numerical simulations.
+近年，さまざまなブラインド残響除去手法が進展している．それらの多くは複数マイクロホン構成を必要とし，さらに人間の音声の非定常性といった，音源に対する統計的の仮定に依存することが多い．その結果，楽器音などの非音声信号へ汎化させることは困難であった．
+% さらに，残響時間が長大な環境において，時間領域でブラインドシステム同定を実行しようとすると，残響モデルに由来する方程式のサイズが膨大になり，標準的なメモリ容量を容易に超過するという空間計算量の問題も存在していた．
+これに対し本研究では，単チャネル設定下における，複数観測間の関係を利用したブラインド残響除去手法を提案する．
+本アプローチでは，単チャネル観測信号から切り出された複数の異なる音源信号の断片に対して，単一の共通するインパルス応答が畳み込まれるという双対なシナリオを仮定する．
+この定式化を時間周波数領域で実装することにより，長大残響に伴う空間計算量問題を効果的に解決する．
+% また，音源に関する事前知識に依存することなくロバストな最適化を達成するため，数値シミュレーションを通じて提案手法の有効性を検証する．
 
 
-\section{Dereverberation via Deconvolutionin Time-Domain}\label{sec:TD}
-時間領域でのCross-Relation法に基づくマルチチャネルブラインドシステム同定に書き換える．そのあと，信号とインパルス応答の役割を入れ替えても同様の議論ができることから，単チャネル設定においても同様の定式化が可能であることを示す．
-In room acoustic environments, the signal recorded by a microphone can be modeled as the linear convolution of the room impulse response (RIR) $\bm{h} \in \mathbb{R}^d$ with a dry signal that does not include reverberation:
-\begin{equation}
-  \bm{x} = \bm{s} \ast \bm{h}.
-\end{equation}
-By introducing the convolution matrix $\mathbf{M}_l(\bm{a})$, the convolution can be rewritten as:
-\[
-\bm{s} \ast \bm{h} = \mathbf{M}_d(\bm{s}) \bm{h} = \mathbf{M}_{l}(\bm{h}) \bm{s}
-\]
+\section{時間領域でのCross-Relation法}\label{sec:TDCR}
+% 時間領域でのCross-Relation法に基づくマルチチャネルブラインドシステム同定に書き換える．そのあと，信号とインパルス応答の役割を入れ替えても同様の議論ができることから，単チャネル設定においても同様の定式化が可能であることを示す．
 
-Dereverberation is the task that estimates $\bm{s}$ from $\bm{x}$.
-If we are informed about $\bm{h}$ in advance, it is a simple linear problem.
-However, in practice, the RIR is hard to know or cannot measure accurately, resulting in a bilnear difficulty of the problem.
-In this paper, we assume that two different signals $\bm{s}_1 \in \mathbb{R}^{l_1}$ 
-and $\bm{s}_2 \in \mathbb{R}^{l_2}$, both convolved with the same RIR, result in:
+一般に，SIMO (Single Input Multiple Output) システムにおけるブラインドチャネル同定手法として，Cross-Relation（CR）法が知られている．本来のCR法は，同一の未知音源信号 $\bm{s}$ が異なる室内インパルス応答（RIR） $\bm{h}_1, \bm{h}_2$ を経て2つのマイクで観測される設定に基づき，$\bm{x}_1 \ast \bm{h}_2 - \bm{x}_2 \ast \bm{h}_1 = \bm{0}$ という関係式から音源 $\bm{s}$ を代数的に消去し，RIRの組を直接同定する手法である．
+
+これに対し本研究では，単一チャネル設定において，音源信号と残響特性の数学的役割を反転させることで，CR法をドライ信号の直接抽出へと応用する．
+室内音響環境において，単一のマイクで録音された残響信号 $\bm{x} \in \mathbb{R}^n$ は，未知のドライ信号 $\bm{s}$ とRIR $\bm{h} \in \mathbb{R}^d$ の線形畳み込み$\bm{x} = \bm{s} \ast \bm{h}$としてモデル化される．
+ここで上記の畳み込みは可換であるため，畳み込み行列 $\mathbf{M}(\cdot)$ を導入すると，次を得る： $\bm{s} \ast \bm{h} = \mathbf{M}_d(\bm{s}) \bm{h} = \mathbf{M}_{l}(\bm{h}) \bm{s}$．
+
+本手法では，同一のRIR $\bm{h}$ が畳み込まれた，互いに素 (同一のベクトルとの畳み込みとして表現されないという意味で用いる) な2つの異なるドライ信号 $\bm{s}_1 \in \mathbb{R}^{l_1}$ および $\bm{s}_2 \in \mathbb{R}^{l_2}$ の区間を観測とし，それぞれの観測信号を次式とする：
 \begin{align}
-  \bm{x}_1 = \bm{s}_1 \ast \bm{h} \in \mathbb{R}^{n_1} \\
-  \bm{x}_2 = \bm{s}_2 \ast \bm{h} \in \mathbb{R}^{n_2}
+\bm{x}_1 = \bm{s}_1 \ast \bm{h} \in \mathbb{R}^{n_1},~
+\bm{x}_2 = \bm{s}_2 \ast \bm{h} \in \mathbb{R}^{n_2}
 \end{align}
+このとき，畳み込みの可換性より，未知のRIR $\bm{h}$ を代数的に消去した以下のCR式が成立する：
+\begin{align}
+&\bm{x}_1 \ast \bm{s}_2 = (\bm{s}_1 \ast \bm{h} \ast \bm{s}_2) = \bm{x}_2 \ast \bm{s}_1 \nonumber \\
+% & \iff \bm{x}_1 \ast \bm{s}_2 - \bm{x}_2 \ast \bm{s}_1 = \bm{0} \nonumber \\
+& \iff [\mathbf{M}_{l_2}(\bm{x}_2), -\mathbf{M}_{l_1}(\bm{x}_1)]
+\begin{bmatrix}\bm{s}_1\\ \bm{s}_2\end{bmatrix} = \bm{0}
+\end{align}
+上式における左辺の行列は，シルベスター行列$\mathbf{A}^{\text{time}}(\bm{x}_1, \bm{x}_2)$ として知られている．$\bm{s}_1$ と $\bm{s}_2$ が互いに素であるとき，この行列の零空間（右特異ベクトル）を求めることで，スケール不定性を除いてドライ信号の組 $\begin{bmatrix}\bm{s}_1^\top & \bm{s}_2^\top\end{bmatrix}^\top$ を一意に復元可能である．
+
+% In room acoustic environments, the signal recorded by a microphone can be modeled as the linear convolution of the room impulse response (RIR) $\bm{h} \in \mathbb{R}^d$ with a dry signal that does not include reverberation:
+% \begin{equation}
+%   \bm{x} = \bm{s} \ast \bm{h}.
+% \end{equation}
+% By introducing the convolution matrix $\mathbf{M}_l(\bm{a})$, the convolution can be rewritten as:
+% \[
+% \bm{s} \ast \bm{h} = \mathbf{M}_d(\bm{s}) \bm{h} = \mathbf{M}_{l}(\bm{h}) \bm{s}
+% \]
+
+% Dereverberation is the task that estimates $\bm{s}$ from $\bm{x}$.
+% If we are informed about $\bm{h}$ in advance, it is a simple linear problem.
+% However, in practice, the RIR is hard to know or cannot measure accurately, resulting in a bilnear difficulty of the problem.
+% In this paper, we assume that two different signals $\bm{s}_1 \in \mathbb{R}^{l_1}$ 
+% and $\bm{s}_2 \in \mathbb{R}^{l_2}$, both convolved with the same RIR, result in:
+% \begin{align}
+%   \bm{x}_1 = \bm{s}_1 \ast \bm{h} \in \mathbb{R}^{n_1} \\
+%   \bm{x}_2 = \bm{s}_2 \ast \bm{h} \in \mathbb{R}^{n_2}
+% \end{align}
 % 本論文では，互いに素なドライ信号に対してRIRが畳み込まれた二つ組の信号を観測とする．ここで，互いに素であるとは，信号の組が何らかの共通する信号との畳み込みになっていないことを指す．
 
-Then, dereverberation can be done as:
-%\begin{multline}
-\begin{align}
-  &\bm{x}_1 \ast \bm{s}^2 = \bm{s}^1 \ast \bm{h} \ast \bm{s}^2 = \bm{x}^2 \ast \bm{s}^1\nonumber \\
-  & \iff \bm{x}^1 \ast \bm{s}^2 - \bm{x}^2 \ast \bm{s}^1 = \bm{0}\nonumber \\
-  & \iff [\mathbf{M}_{l_2}(\bm{x}^2)\, \mathbf{M}_{l_2}(\bm{x}^1)]
-  \begin{bmatrix}\bm{s}^1\\ -\bm{s}^2\end{bmatrix} = \bm{0}
-% \end{multline}
-\end{align}
+% Then, dereverberation can be done as:
+% %\begin{multline}
+% \begin{align}
+%   &\bm{x}_1 \ast \bm{s}^2 = \bm{s}^1 \ast \bm{h} \ast \bm{s}^2 = \bm{x}^2 \ast \bm{s}^1\nonumber \\
+%   & \iff \bm{x}^1 \ast \bm{s}^2 - \bm{x}^2 \ast \bm{s}^1 = \bm{0}\nonumber \\
+%   & \iff [\mathbf{M}_{l_2}(\bm{x}^2)\, \mathbf{M}_{l_2}(\bm{x}^1)]
+%   \begin{bmatrix}\bm{s}^1\\ -\bm{s}^2\end{bmatrix} = \bm{0}
+% % \end{multline}
+% \end{align}
 
-The matrix appearing in the last row of the above equation is known as 
-the \textit{d-th subresultant Sylvester matrix} $\mathbf{A}^{time}_d(\bm{x}^1, \bm{x}^2)$.
-If $\bm{s}^1$ and $\bm{s}^2$ are coprime--that is, they are not convolutions of the same vector--the vector that annihilates $\mathbf{A}^{time}_d$ is uniquely determined up to scalar multiplication, as shown in the above equation.
-Therefore, the dry signals $\bm{s}^1$ and $\bm{s}^2$ can be recovered as the right  singular vector corresponding to the unique zero singular value.
+% The matrix appearing in the last row of the above equation is known as 
+% the \textit{d-th subresultant Sylvester matrix} $\mathbf{A}^{time}_d(\bm{x}^1, \bm{x}^2)$.
+% If $\bm{s}^1$ and $\bm{s}^2$ are coprime--that is, they are not convolutions of the same vector--the vector that annihilates $\mathbf{A}^{time}_d$ is uniquely determined up to scalar multiplication, as shown in the above equation.
+% Therefore, the dry signals $\bm{s}^1$ and $\bm{s}^2$ can be recovered as the right  singular vector corresponding to the unique zero singular value.
 
-\paragraph*{about the negative aspect of Time domain deconvolution}
-However, the Sylvester matrix is often of huge size in practical situations.
-For example, if the lengths of the dry signals and RIR are 1 sec 20kHz of sampling frequency, the size of Sylvester matrix is X by Y, occupying more than 16GB in double floating point accuracy.
-This quantity is too large for the personal computer, and users cannot run the program.
+\paragraph*{空間計算量の問題}
+しかしながら，時間領域での畳み込みモデルに基づくブラインド残響除去には，空間計算量の問題が存在する．
+畳み込みの長さが $d$ であるとき，シルベスター行列 $\mathbf{A}^{\text{time}}$ のサイズは $O(n_1 + n_2 - 2d) \times O(l_1 + l_2 - 2d)$ となる．残響時間が長大な環境においては，RIRの長さ $d$ が大きくなる．
+たとえば，ドライ信号とRIRの長さがそれぞれ1秒でサンプリング周波数が20kHzの場合，シルベスター行列のサイズはX by Yとなり，倍精度浮動小数点数で16GB以上を占有することになる．
+% However, the Sylvester matrix is often of huge size in practical situations.
+% For example, if the lengths of the dry signals and RIR are 1 sec 20kHz of sampling frequency, the size of Sylvester matrix is X by Y, occupying more than 16GB in double floating point accuracy.
+% This quantity is too large for the personal computer, and users cannot run the program.
 
 
 \section{提案法}
 \subsection{サブバンド畳み込みモデルに基づく定式化}
-時間領域において，2組の独立したクリーン音声信号を $s^1(t), s^2(t)$ とし，これらが同一の部屋インパルス応答（RIR） $h(t)$ を経て観測信号 $x^1(t), x^2(t)$ として得られる音響システムを想定する．このとき，時間領域における観測モデルは次式のように線形畳み込み演算 $\ast$ を用いて表される：
+時間領域単チャネルCR法の空間計算量の問題を解決するために，提案法では，時間周波数領域でのサブバンド畳み込みモデルに基づく定式化を採用する．
+各信号に対し，離散ガボール変換（DGT）を適用し，時間周波数領域へ変換する．各周波数ビン $f$ において，時間フレーム方向のサブバンド畳み込み近似が成り立つと仮定すると，TF領域における観測信号 $\mathbf{x}_f^1(n), \mathbf{x}_f^2(n)$ は以下のようにモデル化できる\cite{li2018ctf}.
 \begin{equation}
-    x^1(t) = s^1(t) \ast h(t), \quad x^2(t) = s^2(t) \ast h(t)
+    \mathbf{x}_f^1(n) \approx \mathbf{s}_f^1(n) \ast \mathbf{h}_f(n), \quad \mathbf{x}_f^2(n) \approx \mathbf{s}_f^2(n) \ast \mathbf{h}_f(n)
 \end{equation}
-
-これらの信号に対し，窓関数を用いた短時間フーリエ変換（STFT）あるいは離散ガボール変換（DGT）を適用し，時間周波数（TF）領域へ変換する．各周波数ビン $f$ において，時間フレーム方向のサブバンド畳み込み近似が成り立つと仮定すると，TF領域における観測信号 $X_f^1(n), X_f^2(n)$ は以下のようにモデル化できる\footnote{クロスバンド成分を含めた厳密な畳み込みモデルも知られている[引用:crossband filtering]．}：
-\begin{equation}
-    X_f^1(n) \approx s_f^1(n) \ast h_f(n), \quad X_f^2(n) \approx s_f^2(n) \ast h_f(n)
-\end{equation}
-ここで，$n$ は時間フレームのインデックスであり，$s_f^1(n), s_f^2(n)$ はクリーン音声のサブバンド成分，$h_f(n)$ は時間フレーム方向に作用するサブバンドインパルス応答を表す．
+ここで，$n$ は時間フレームのインデックスであり，$\mathbf{s}_f^1(n), \mathbf{s}_f^2(n)$ はクリーン音声のサブバンド成分，$\mathbf{h}_f(n)$ は時間フレーム方向に作用するサブバンドインパルス応答を表す．なお，このモデルはあくまで近似的なものであり，スペクトルのもれなどの影響により，厳密な畳み込み関係は成立しないことを付記しておく．
 
 \subsection{共通因子分解とSylvester行列の構成}
-続いて，式(2)より，共通のサブバンドインパルス応答 $h_f(n)$ を消去するために，ベクトルの畳み込み演算に関する可換性（$s_f^1 \ast h_f \ast s_f^2 = s_f^2 \ast h_f \ast s_f^1$）を利用すると，以下の関係式が導かれる：
+続いて，第2節で紹介したCR法の理論より，共通のサブバンドインパルス応答 $\mathbf{h}_f(n)$ を消去するために，ベクトルの畳み込み演算に関する可換性（$\mathbf{s}_f^1 \ast \mathbf{h}_f \ast \mathbf{s}_f^2 = \mathbf{s}_f^2 \ast \mathbf{h}_f \ast \mathbf{s}_f^1$）を利用すると，
+以下の関係式が導かれる：
+% \begin{equation}
+%     X_f^1(n) \ast s_f^2(n) - X_f^2(n) \ast s_f^1(n) \approx 0 \label{eq:convolution}
+% \end{equation}
+% 式\eqref{eq:convolution}は，観測信号の複素スペクトル時系列から生成されるToeplitz行列 $\mathbf{C}(X_f^1), \mathbf{C}(X_f^2)$，およびクリーン音声のサブバンドベクトル $\mathbf{s}_f^1, \mathbf{s}_f^2$ を用いることで，次のような線形行列方程式の形式に書き換えることができる：
+% \begin{equation}
+%     \mathbf{C}(X_f^1) \mathbf{s}_f^2 - \mathbf{C}(X_f^2) \mathbf{s}_f^1 \approx \mathbf{0}
+% \end{equation}
+% これらを1つの係数行列としてブロック結合により統合することで，以下に示す方程式を得る：
 \begin{equation}
-    X_f^1(n) \ast s_f^2(n) - X_f^2(n) \ast s_f^1(n) \approx 0 \label{eq:convolution}
-\end{equation}
-式\eqref{eq:convolution}は，観測信号の複素スペクトル時系列から生成されるToeplitz行列 $\mathbf{C}(X_f^1), \mathbf{C}(X_f^2)$，およびクリーン音声のサブバンドベクトル $\mathbf{s}_f^1, \mathbf{s}_f^2$ を用いることで，次のような線形行列方程式の形式に書き換えることができる：
-\begin{equation}
-    \mathbf{C}(X_f^1) \mathbf{s}_f^2 - \mathbf{C}(X_f^2) \mathbf{s}_f^1 \approx \mathbf{0}
-\end{equation}
-これらを1つの係数行列としてブロック結合により統合することで，以下に示す方程式を得る：
-\begin{equation}
-    \begin{bmatrix} \mathbf{C}(X_f^2) & -\mathbf{C}(X_f^1) \end{bmatrix} 
+    \begin{bmatrix} \mathbf{C}(\mathbf{x}_f^2) & -\mathbf{C}(\mathbf{x}_f^1) \end{bmatrix} 
     \begin{bmatrix} \mathbf{s}_f^1 \\ \mathbf{s}_f^2 \end{bmatrix} \approx \mathbf{0}\label{eq:sylvester}
 \end{equation}
-ここで，左辺の係数行列は以下のように定義されるSylvester行列 $\mathbf{A}_f$ に相当する：
+ただし，$\mathbf{A}_f$以下のように定義されるSylvester行列
 \begin{equation}
-    \mathbf{A}_f \overset{\mathrm{def}}{=} \begin{bmatrix} \mathbf{C}(X_f^2) & -\mathbf{C}(X_f^1) \end{bmatrix}
+    \mathbf{A}_f \overset{\mathrm{def}}{=} \begin{bmatrix} \mathbf{C}(\mathbf{x}_f^2) & -\mathbf{C}(\mathbf{x}_f^1) \end{bmatrix}
+\end{equation}
+$\mathbf{C}(\mathbf{x}_f^1)$および$\mathbf{C}(\mathbf{x}_f^2)$は観測信号の複素スペクトル時系列から生成されるToeplitz行列である．
+
+上述のTF領域での畳み込みモデルはあくまで近似であり，雑音が存在しない理想的な状況においてもスペクトルのもれなどの影響により，式\eqref{eq:sylvester}は厳密な解を持たないため，特異値分解（SVD）を利用する．$\mathbf{A}_f$ のSVDを $\mathbf{A}_f = \mathbf{U}_f \bm{\Sigma}_f \mathbf{V}_f^\mathrm{H}$ としたとき，最小特異値に対応する右特異ベクトル $\mathbf{v}_{f,\mathrm{min}}$（すなわち $\mathbf{V}_f$ の最終列ベクトル）をクリーン信号の推定解 $\hat{\mathbf{s}}_f^1, \hat{\mathbf{s}}_f^2$ として採用する：
+\begin{equation}
+    \begin{bmatrix} \hat{\mathbf{s}}_f^1 \\ \hat{\mathbf{s}}_f^2 \end{bmatrix} = \mathbf{v}_{f,\mathrm{min}}
 \end{equation}
 
-\subsection{最小特異値に対応する特異ベクトルによる近似解法}
-理想的な線形畳み込み条件，かつ信号長が十分である無雑音下においては，クリーン信号ベクトル $\mathbf{u}_f = [\mathbf{s}_f^{1\mathrm{H}}, \mathbf{s}_f^{2\mathrm{H}}]^\mathrm{H}$ はSylvester行列 $\mathbf{A}_f$ の右零空間の基底ベクトルとして一意に獲得できる．
-
-しかしながら，TF領域での畳み込みモデルはあくまで近似であり，雑音が存在しない理想的な状況においてもスペクトルのもれなどの影響により，式\eqref{eq:sylvester}は厳密な解を持たない．加えて，実際の環境では雑音は不可避的に混入するために$\mathbf{A}_f$ はフルランク行列となってしまい，やはり厳密な意味での零空間は存在しない．
-
-そこで本手法では，等式拘束 $\mathbf{A}_f \mathbf{u}_f = \mathbf{0}$ を最小二乗の意味で近似的に解くため，特異値分解（SVD）を利用する．$\mathbf{A}_f$ のSVDを $\mathbf{A}_f = \mathbf{U}_f \bm{\Sigma}_f \mathbf{V}_f^\mathrm{H}$ としたとき，最小特異値に対応する右特異ベクトル $\mathbf{v}_{f,\mathrm{min}}$（すなわち $\mathbf{V}_f$ の最終列ベクトル）をクリーン信号の推定解 $\hat{\mathbf{u}}_f$ として採用する：
-\begin{equation}
-    \hat{\mathbf{u}}_f = \mathbf{v}_{f,\mathrm{min}}
-\end{equation}
-
-\subsection{提案法：$L_{21}$正則化ADMMによるアルゴリズムの高度化}
-前節で述べたSVDに基づく最小特異ベクトルの抽出（式(7)）は，無雑音かつ理想的なサブバンド畳み込み条件下においては有効な解を与える．しかしながら，実環境における観測信号には環境雑音が含まれるだけでなく，音声信号の無音区間に対して非因果的な音漏れが生じ，分離音声の品質を著しく劣化させるという課題がある．
-
-この課題に対処するため，本研究では，時間領域における発音区間と無音区間の連続性に着目し，時間フレームの近傍ブロック単位でエネルギーを収縮させる\textbf{グループスパース（$L_{2,1}$）正則化}を導入する．これにより，等式拘束 $\mathbf{S}_f \mathbf{u}_f \approx \mathbf{0}$ を緩やかに満たしつつ，不要な音漏れ成分のみを排他的にゼロに潰すアルゴリズムへと拡張する．
-
-%本手法における最適化問題は，補助変数 $\mathbf{z}_f$ を用いて以下のように定式化される：
-% \begin{equation}
-%     \min_{\mathbf{u}_f, \mathbf{z}_f} \frac{1}{2} \|\mathbf{S}_f \mathbf{u}_f\|_2^2 + \alpha \|\mathbf{z}_f\|_{2,1} \quad \text{subject to } \mathbf{u}_f = \mathbf{z}_f
-% \end{equation}
-% ここで $\alpha > 0$ はスパース性の強度を制御するハイパーパラメータであり，$\|\cdot\|_{2,1}$ は時間フレームを $G$ 個のローカルブロック $\mathbf{g}_1, \dots, \mathbf{g}_G$ に分割した混合ノルム $\|\mathbf{z}_f\|_{2,1} = \sum_{g=1}^G \|\mathbf{z}_{f,\mathbf{g}_g}\|_2$ を表す．
-%
-% 本非凸最適化問題を効率的かつ安定して解くために，\textbf{交互方向乗数法（ADMM: Alternating Direction Method of Multipliers）}を適用する．等式拘束に対するラグランジュ乗数ベクトルを $\mathbf{y}_f$，ペナルティパラメータを $\rho > 0$ とおくと，スケーリングされた拡張ラグランジュ関数は次式で与えられる：
-% \begin{equation}
-%     \mathcal{L}_\rho(\mathbf{u}_f, \mathbf{z}_f, \mathbf{y}_f) = \frac{1}{2} \|\mathbf{S}_f \mathbf{u}_f\|_2^2 + \alpha \|\mathbf{z}_f\|_{2,1} + \frac{\rho}{2} \left\| \mathbf{u}_f - \mathbf{z}_f + \frac{\mathbf{y}_f}{\rho} \right\|_2^2 - \frac{1}{2\rho}\|\mathbf{y}_f\|_2^2
-% \end{equation}
-%
-% ADMMの更新ループにおいては，前節の式(7)で得られたSVDの解析解 $\mathbf{v}_{f,\mathrm{min}}$ が極めて優れた初期値として機能する．すなわち，最適化の初期値（第0イテレーション）を以下のように設定し，各変数を交互に更新する：
-% \begin{align}
-%     \mathbf{u}_f^{(0)} &= \mathbf{v}_{f,\mathrm{min}} \\
-%     \mathbf{z}_f^{(0)} &= \mathbf{v}_{f,\mathrm{min}} \\
-%     \mathbf{y}_f^{(0)} &= \mathbf{0}
-% \end{align}
-
-% これに基づき，各反復 $k$ における $\mathbf{u}_f$-update，$\mathbf{z}_f$-update（Block Soft-Thresholding），および乗数 $\mathbf{y}_f$-update の具体的な導出を以下に示す．
-\paragraph{グループスパース性を導入した定式化}
-ある周波数ビン $f$ において，未知の元信号ベクトル（2つの信号のSTFT成分を縦に連結したもの）を $\mathbf{u} \in \mathbb{C}^{2T}$，観測信号から構成したSylvester行列を $\mathbf{A} \in \mathbb{C}^{M \times 2T}$ とする．
-モデルの等式拘束 $\mathbf{A}\mathbf{u} \approx \mathbf{0}$ を満たしつつ，時間的な無音区間の音漏れを防ぐために時間フレームの近傍ブロックごとにグループスパース性を誘導する．
-
-全体の最適化問題は以下のように定式化される．
-$$\min_{\mathbf{u}, \mathbf{z}} \frac{1}{2} \|\mathbf{A}\mathbf{u}\|_2^2 + \alpha \|\mathbf{z}\|_{2,1} \quad \text{subject to } \mathbf{u} = \mathbf{z}$$
-ここで，$\|\mathbf{z}\|_{2,1}$ は$L_{2,1}$ 混合ノルムであり，ベクトルを $G = |\mathcal{G}|$ 個の互いに素なグループ $\mathcal{G} = \{\mathbf{g}_1, \mathbf{g}_2, \dots, \mathbf{g}_G\}$ に時間方向の分割したとき，以下のように定義される．
-$$\|\mathbf{z}\|_{2,1} = \sum_{g=1}^G \|\mathbf{z}_{\mathbf{g}_g}\|_2$$
-各グループ $\mathbf{g}_i$ 内の $L_2$ ノルムの和を取ることで，グループ単位でのスパース性を促す．
-
-\paragraph{拡張ラグランジュ関数の構成}
-ADMMを適用するため，拡張ラグランジュ関数を構成し，平方完成する:
-\begin{align}
-\mathcal{L}_\rho(\mathbf{u},  \mathbf{z}, \mathbf{y}) &= \frac{1}{2} \|\mathbf{A}\mathbf{u}\|_2^2 + \alpha \sum_{g=1}^G \|\mathbf{z}_{\mathbf{g}_g}\|_2+ \text{Re}\langle \mathbf{y}, \mathbf{u} - \mathbf{z} \rangle + \frac{\rho}{2} \|\mathbf{u} - \mathbf{z}\|_2^2\nonumber\\
-% \mathcal{L}_\rho(\mathbf{u}, \mathbf{z}, \mathbf{y}) 
-&= \frac{1}{2} \|\mathbf{A}\mathbf{u}\|_2^2 + \alpha \sum_{g=1}^G \|\mathbf{z}_{\mathbf{g}_g}\|_2 \frac{\rho}{2} \left\| \mathbf{u} - \mathbf{z} + \frac{\mathbf{y}}{\rho} \right\|_2^2 - \frac{1}{2\rho}\|\mathbf{y}\|_2^2.
-\end{align}
-ここで$\mathbf{y} \in \mathbb{C}^{2T}$は等式拘束 $\mathbf{u} = \mathbf{z}$ に対するラグランジュ乗数，$\rho > 0$ はペナルティパラメータである．
-
-\paragraph{ADMMによる反復更新則の導出}
-\subparagraph{Step 1}
-
-$\mathbf{z}$ と $\mathbf{y}$ を固定し，$\mathcal{L}_\rho$ を $\mathbf{u}$ について最小化する．
-\begin{align}
-\mathbf{u}^{(k+1)} = \arg\min_{\mathbf{u}} \frac{1}{2} \|\mathbf{A}\mathbf{u}\|_2^2 + \frac{\rho}{2} \left\| \mathbf{u} - \mathbf{z}^{(k)} + \frac{\mathbf{y}^{(k)}}{\rho} \right\|_2^2  
-\end{align}
-
-これの$\mathbf{u}^*$ に関する勾配が $0$ になる点を求めることで，更新式を得る\footnote{グループスパース性を導入しないナイーブなアルゴリズムは，雑音に対して非常に脆弱であった．そのため以前の実装ではTikonov正則化を導入したのだが，現在導出しているアルゴリズムでは，$\rho \mathbf{I}$  の加算が同様の役割を果たしている．}：
-\begin{align}
-\mathbf{A}^H\mathbf{A}\mathbf{u} + \rho \left( \mathbf{u}^{(k+1)} - \mathbf{z}^{(k)} + \frac{\mathbf{y}^{(k)}}{\rho} \right) = \mathbf{0} \nonumber \\
-~\Leftrightarrow ~
-\mathbf{u}^{(k+1)} = \left( \mathbf{A}^H\mathbf{A} + \rho \mathbf{I} \right)^{-1} \left( \rho \mathbf{z}^{(k)} - \mathbf{y}^{(k)} \right).
-\end{align}
+\begin{algorithm}[t]
+\caption{Subband Blind Deconvolution via SVD of Sylvester Matrix}
+\label{alg:sylDerev_simple}
+\begin{algorithmic}[1]
+\Require Subband observed signals $\bm{X}_{1f}, \bm{X}_{2f}$ at frequency bin $f$, filter length $\bm{l} = [l_1, l_2]^T$
+\Ensure Estimated dry signals $\mathbf{v}_{1f}, \mathbf{v}_{2f}$ at frequency bin $f$
 
 
-\subparagraph{Step 2}
+\State $A_{X} \gets \|[\bm{X}_{1f}^T, \bm{X}_{2f}^T]\|_2$ % \Comment{Calculate the norm of the observed signal}
+\State $\bm{\mathcal{S}}_f \gets [\mathbf{M}_{l_1}(\bm{X}_{2f}) \quad -\mathbf{M}_{l_2}(\bm{X}_{1f})]$ \Comment{Construct Sylvester matrix}
 
-$\mathbf{u}$ と $\mathbf{y}$ を固定し，$\mathcal{L}_\rho$ を $\mathbf{z}$ について最小化する．
-\begin{multline}
-  \mathbf{z}^{(k+1)} = \arg\min_{\mathbf{z}} \alpha \sum_{g=1}^G \|\mathbf{z}_{\mathbf{g}_g}\|_2  + \frac{\rho}{2} \left\| \mathbf{u}^{(k+1)} - \mathbf{z} + \frac{\mathbf{y}^{(k)}}{\rho} \right\|_2^2
-\end{multline}
-この問題は，各グループ $\mathbf{g}_g$ ごとに完全に独立した問題に分解可能である．$\mathbf{v} = \mathbf{u}^{(k+1)} + \frac{1}{\rho}\mathbf{y}^{(k)}$ と置くことで各グループの最適化問題は次式で表される．
-\begin{align}
-\mathbf{z}_{\mathbf{g}_g}^{(k+1)} = \arg\min_{\mathbf{z}_{\mathbf{g}_g}} \alpha \|\mathbf{z}_{\mathbf{g}_g}\|_2 + \frac{\rho}{2} \|\mathbf{z}_{\mathbf{g}_g} - \mathbf{v}_{\mathbf{g}_g}\|_2^2
-\end{align}
-これは Block Soft-Thresholding の定義そのものであり，解析的に以下の解が得られる．
-\begin{align}
-  \mathbf{z}_{\mathbf{g}_g}^{(k+1)} &= \text{prox}_{\frac{\alpha}{\rho}\|\cdot\|_2}(\mathbf{v}_{\mathbf{g}_g}) \\ &= \max\left( 1 - \frac{\alpha}{\rho \|\mathbf{v}_{\mathbf{g}_g}\|_2}, 0 \right) \mathbf{v}_{\mathbf{g}_g}
-\end{align}
+\Statex \textbf{// Extract the null-space vector}
+\State $[\mathbf{U}, \bm{\Sigma}, \mathbf{V}] \gets \text{svd}(\bm{\mathcal{S}}_f+ \alpha \mathbf{I}, \text{``econ''})$
+% \State $\sigma \gets \text{diag}(\bm{\Sigma})$ \Comment{Extract singular values: $\sigma_1 \ge \sigma_2 \ge \dots \ge \sigma_{\text{end}}$}
+\State $\mathbf{v}_f \gets \mathbf{V}(:, \text{end})$ %\Comment{Right singular vector corresponding to the minimum singular value}
 
-\subparagraph{Step 3}
+\Statex \textbf{// Recover the original scale}
+\State $\mathbf{v}_f \gets A_{X} \cdot \mathbf{v}_f / \|\mathbf{v}_f\|_2$ 
 
-最後に，等式拘束の残差を用いてラグランジュ乗数を更新する．
-\begin{equation}
-\mathbf{y}^{(k+1)} = \mathbf{y}^{(k)} + \rho \left( \mathbf{u}^{(k+1)} - \mathbf{z}^{(k+1)} \right)
-\end{equation}
-% - $\rho \mathbf{I}$  の加算が結果的に正則化として寄与している
-
-\subparagraph{Step 4:スケール拘束（非凸）への対処}
-
-この問題は本質的に，零空間の探索（=システム同定）であるため，$\mathbf{u}=\mathbf{0}$ という自明な解に潰れるのを防ぐ必要がある．元のモデルでは $\|\mathbf{u}\|_2 = 1$ という球面拘束があるものの，これはnon-convex拘束である．
-本稿ではADMMの標準的な収束性を崩さないため，「ADMMの1ループの終わりに，スパース化された解 $\mathbf{z}$ を射影する」というアプローチを取る．
-\begin{equation}
-\mathbf{z}^{(k+1)} \leftarrow \frac{\mathbf{z}^{(k+1)}}{\|\mathbf{z}^{(k+1)}\|_2}
-\end{equation}
-これにより，自明解をさけながら不要な音漏れだけを排他することを目論む．
+\Statex \textbf{// Decompose into the two dry signals}
+\State $\mathbf{v}_{f}^{1} \gets \mathbf{v}_f(1 : l_1)$，$\mathbf{v}_{f}^{2} \gets \mathbf{v}_f(l_1 + 1 : \text{end})$
+\State \Return $\mathbf{v}_{1f}, \mathbf{v}_{2f}, \gamma_f$
+\end{algorithmic}
+\end{algorithm}
 
 \section{数値シミュレーション}
 \subsection{シミュレーションの設定}
-シミュレーションでは，クリーン信号はMIDI音源から生成された楽器音であり，RIRは実測されたものを使用する．観測信号はこれらのクリーン信号とRIRの畳み込みにより生成される．提案法の性能は，クリーン信号と推定された信号のSDRを評価することで評価する．サンプリング周波数は12kHz，STFTのフレーム長は512サンプル，ホップサイズは128サンプルである．グループスパース正則化の強度を制御するハイパーパラメータ $\alpha$ は経験的に$0.01$を選択した．
+提案法の有効性を確認するための数値シミュレーションを実施する．
+クリーン信号に対して室内インパルス応答を畳み込み，加法性雑音が重畳された信号に対して，残響除去を行った結果を比較する．クリーン信号はMIDI音源から生成された楽器音であり，RIRは実測されたものを使用する．観測信号はこれらのクリーン信号とRIRの畳み込みにより生成される．提案法の性能は，クリーン信号と推定された信号のSDRを評価することで評価する．サンプリング周波数は12kHz，DGTのフレーム長は512サンプル，ホップサイズは128サンプルである．
 \subsection{結果}
-持続する音に対しても，提案法はクリーン信号と比較して高いSDRを達成し，従来のL1正則化のアプローチと比較して過度に抑制されないことが示された．以下にスペクトログラムを示す．
-\begin{figure}
+持続する音に対しても，提案法はクリーン信号と比較して高いSDRを達成した．図1と図2は，それぞれのクリーン信号，観測信号，復元信号のスペクトログラムを示している．これらの結果は，提案法が残響成分を効果的に除去し，クリーン信号の特徴を保持しながら復元できることを示している．
+
+
+\begin{table}[t]
 \centering
-\includegraphics[width=0.8\linewidth]{../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_dry.png}
-\caption{ドライ音のスペクトログラム}
-\includegraphics[width=0.8\linewidth]{../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_wet.png}
-\caption{残響時間$2.6$秒の観測音のスペクトログラム (SDR=$-0.70$ dB)}
-\includegraphics[width=0.8\linewidth]{../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_ret_pad=-2.png}
-\caption{復元音のスペクトログラム (SDR=$9.06$ dB)}
-\end{figure}
+\caption{Average execution time per set [sec] across different reverberation time (sec).}
+\label{tab:execution_time}
+\vspace{2mm}
+\small
+\begin{tabular}{lcccc}
+\toprule
+{} & $0.3$\,s & $1.0$\,s& $1.9$\,s & $2.3$\,s\\
+\midrule
+WPE             & 0.46 & 0.93 & 4.29 & 5.12\\
+Proposed  & 7.46          & 7.75          & 9.34          & 10.06         \\
+Lifting         & 54.10         & 193.77        & 492.38        & 625.02        \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{figure}
 \centering
-\includegraphics[width=0.8\linewidth]{../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_8000_1_dry.png}
-\caption{ドライ音のスペクトログラム}
-\includegraphics[width=0.8\linewidth]{../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_8000_1_wet.png}
-\caption{残響時間$2.6$秒の観測音のスペクトログラム (SDR=$-2.08$ dB)}
-\includegraphics[width=0.8\linewidth]{../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_ds_1_ret_pad=-2.png}
-\caption{復元音のスペクトログラム (SDR=$7.17$ dB)}
+
+\includegraphics[width=1.0\linewidth]{../Rk1NullspaceOfSylvester_STFTdomain/result/main20260620all.pdf}
 \end{figure}
+
+% [IR 1: RT60 = 0.3s]
+%   Proposed  : 7.4561 秒
+%   Lifting   : 54.1000 秒
+%   WPE       : 0.4588 秒
+% [IR 2: RT60 = 1.0s]
+%   Proposed  : 7.7531 秒
+%   Lifting   : 193.7664 秒
+%   WPE       : 0.9346 秒
+% [IR 3: RT60 = 1.9s]
+%   Proposed  : 9.3386 秒
+%   Lifting   : 492.3833 秒
+%   WPE       : 4.2931 秒
+% [IR 4: RT60 = 2.3s]
+%   Proposed  : 10.0580 秒
+%   Lifting   : 625.0186 秒
+%   WPE       : 5.1205 秒
+
+% \begin{figure}
+% \centering
+% \includegraphics[width=0.8\linewidth]{../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_dry.png}
+% \caption{ドライ音のスペクトログラム}
+% \includegraphics[width=0.8\linewidth]{../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_wet.png}
+% \caption{残響時間$2.6$秒の観測音のスペクトログラム (SDR=$-0.70$ dB)}
+% \includegraphics[width=0.8\linewidth]{../Rk1NullspaceOfSylvester_STFTdomain/result/9w3r7y_01_1_ret_pad=-2.png}
+% \caption{復元音のスペクトログラム (SDR=$9.06$ dB)}
+% \end{figure}
+
+% \begin{figure}
+% \centering
+% \includegraphics[width=0.8\linewidth]{../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_8000_1_dry.png}
+% \caption{ドライ音のスペクトログラム}
+% \includegraphics[width=0.8\linewidth]{../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_8000_1_wet.png}
+% \caption{残響時間$2.6$秒の観測音のスペクトログラム (SDR=$-2.08$ dB)}
+% \includegraphics[width=0.8\linewidth]{../Rk1NullspaceOfSylvester_STFTdomain/result/Goldberg_clav_mono_ds_1_ret_pad=-2.png}
+% \caption{復元音のスペクトログラム (SDR=$7.17$ dB)}
+% \end{figure}
 
 \section{結論}
-本研究では，単チャネル設定におけるブラインド残響除去のための新しい手法を提案した．時間周波数領域でのサブバンド畳み込みモデルに基づく定式化と，グループスパース正則化を組み込んだADMMアルゴリズムの導入により，長大残響環境下での空間計算量問題を解決しつつ，信号波形の過剰な抑制を回避した．数値シミュレーションにおいて，提案法はクリーン信号と比較して高いSDRを達成し，従来のSVDベースのアプローチと比較して雑音耐性が向上することが示された．今後の研究では，実録音データへの適用を検討する予定である．
+単チャネル設定におけるブラインド残響除去のための新しい手法を提案した．時間周波数領域でのサブバンド畳み込みモデルに基づく定式化により，長大残響環境下での空間計算量問題を解決しつつ，信号波形の過剰な抑制を回避した．
+
+\footnotesize{
+\begin{thebibliography}{1}
+  \bibitem{li2018ctf} X. Li, S. Gannot, L. Girin and R. Horaud, "Multichannel Identification and Nonnegative Equalization for Dereverberation and Noise Reduction Based on Convolutive Transfer Function," in IEEE/ACM TASLP, \textbf{26}(10) pp.1755-1768, Oct. 2018,
+\end{thebibliography}
+}
 \end{document}

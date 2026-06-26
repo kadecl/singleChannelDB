@@ -1,29 +1,19 @@
 \relax 
+\citation{li2018ctf}
 \@writefile{toc}{\contentsline {section}{\numberline {1}はじめに}{1}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {2}Dereverberation via Deconvolutionin Time-Domain}{1}{}\protected@file@percent }
-\newlabel{sec:TD}{{2}{1}}
-\@writefile{toc}{\contentsline {section}{\numberline {3}提案法}{2}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}サブバンド畳み込みモデルに基づく定式化}{2}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}共通因子分解とSylvester行列の構成}{3}{}\protected@file@percent }
-\newlabel{eq:convolution}{{7}{3}}
-\newlabel{eq:sylvester}{{9}{3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}最小特異値に対応する特異ベクトルによる近似解法}{3}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}提案法：$L_{21}$正則化ADMMによるアルゴリズムの高度化}{3}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{グループスパース性を導入した定式化}{3}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{拡張ラグランジュ関数の構成}{4}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{ADMMによる反復更新則の導出}{4}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subparagraph}{Step 1}{4}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subparagraph}{Step 2}{4}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subparagraph}{Step 3}{5}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subparagraph}{Step 4:スケール拘束（非凸）への対処}{5}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}数値シミュレーション}{5}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}シミュレーションの設定}{5}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}結果}{5}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5}結論}{5}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces ドライ音のスペクトログラム}}{6}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces 残響時間$2.6$秒の観測音のスペクトログラム (SDR=$-0.70$ dB)}}{6}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces 復元音のスペクトログラム (SDR=$9.06$ dB)}}{6}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces ドライ音のスペクトログラム}}{7}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces 残響時間$2.6$秒の観測音のスペクトログラム (SDR=$-2.08$ dB)}}{7}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces 復元音のスペクトログラム (SDR=$7.17$ dB)}}{7}{}\protected@file@percent }
-\gdef \@abspage@last{7}
+\@writefile{toc}{\contentsline {section}{\numberline {2}時間領域でのCross-Relation法}{1}{}\protected@file@percent }
+\newlabel{sec:TDCR}{{2}{1}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}提案法}{1}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}サブバンド畳み込みモデルに基づく定式化}{1}{}\protected@file@percent }
+\bibcite{li2018ctf}{1}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces Subband Blind Deconvolution via SVD of Sylvester Matrix}}{2}{}\protected@file@percent }
+\newlabel{alg:sylDerev_simple}{{1}{2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}共通因子分解とSylvester行列の構成}{2}{}\protected@file@percent }
+\newlabel{eq:sylvester}{{4}{2}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}数値シミュレーション}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}シミュレーションの設定}{2}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Average execution time per set [sec] across different reverberation time (sec).}}{2}{}\protected@file@percent }
+\newlabel{tab:execution_time}{{1}{2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}結果}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}結論}{2}{}\protected@file@percent }
+\gdef \@abspage@last{2}
