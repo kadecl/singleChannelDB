@@ -1,3 +1,25 @@
+% ---- 平均処理時間 (1セットあたり) ----
+% [IR 1: RT60 = 0.3s]
+%   Proposed CR : 7.4561 秒
+%   Lifting     : 54.1000 秒
+%   Monaural WPE: 0.4588 秒
+% [IR 2: RT60 = 1.0s]
+%   Proposed CR : 7.7531 秒
+%   Lifting     : 193.7664 秒
+%   Monaural WPE: 0.9346 秒
+% [IR 3: RT60 = 2.2s] (Skipped in plot)
+%   Proposed CR : 9.9291 秒
+%   Lifting     : 615.9447 秒
+%   Monaural WPE: 5.3021 秒
+% [IR 4: RT60 = 1.9s]
+%   Proposed CR : 9.3386 秒
+%   Lifting     : 492.3833 秒
+%   Monaural WPE: 4.2931 秒
+% [IR 5: RT60 = 2.3s]
+%   Proposed CR : 10.0580 秒
+%   Lifting     : 625.0186 秒
+%   Monaural WPE: 5.1205 秒
+
 %% 1. 設定と初期化
 clear; clc; close all;
 
@@ -84,6 +106,7 @@ for ir_idx = 1:num_ir
         for i = 1:2
             audiofilename = fullfile(current_sub_dir, fpaths(i).name);
             [temp, fs_audio] = audioread(audiofilename);
+            ss{i} = temp(:,1);
             
             % 残響の畳み込み
             obs{i} = conv(ss{i}, ir);
@@ -91,7 +114,7 @@ for ir_idx = 1:num_ir
 
             % additive noise
             noise = randn(size(obs{i}));
-            noise = 0.1 * noise * norm(temp(:,i)) / norm(noise);
+            noise = 0.1 * noise * norm(temp(:,1)) / norm(noise);
             
             % 後段のLifting法へ渡す用の一時ファイル（フォルダ直下に保存して競合回避）
             tmp_speech_paths{i} = fullfile(current_sub_dir, sprintf('tmp_speech_ch%d.wav', i));
@@ -174,21 +197,35 @@ for ir_idx = 1:num_ir
     end
 end
 
-%% 3. 箱ひげ図 (Boxchart) の自動プロット
+%% 3. 箱ひげ図 (Boxchart) の自動プロット（IR3スキップ & IRごと時間集計版）
 fprintf('\n実験完了。プロットを作成中...\n');
 
-total_samples = num_sets * num_ir * 3; 
+% プロット対象のIRインデックスを決定 (3を除外)
+target_ir_indices = 1:num_ir;
+target_ir_indices(target_ir_indices == 3) = []; 
+
+% スキップした後の実質的なデータ数を計算
+num_plot_ir = length(target_ir_indices);
+total_samples = num_sets * num_plot_ir * 3; 
+
 plot_SDR = zeros(total_samples, 1);
 plot_IR  = cell(total_samples, 1);
 plot_Method = cell(total_samples, 1);
 
+% categorical用に、3を除外した一意のマスターラベルリストを再構築
 unique_labels = cell(1, num_ir);
 for ir_idx = 1:num_ir
-    unique_labels{ir_idx} = sprintf('IR %d (%s)', ir_idx, rt60_labels{ir_idx});
+    unique_labels{ir_idx} = sprintf('%s', rt60_labels{ir_idx});
 end
+plot_labels = unique_labels(target_ir_indices);
 
 idx = 1;
 for ir_idx = 1:num_ir
+    % ir_idx = 3 の場合はプロットデータ生成をスキップ
+    if ir_idx == 3
+        continue;
+    end
+    
     for s_idx = 1:num_sets
         % CR法
         plot_SDR(idx) = delta_SDR_CR(s_idx, ir_idx);
@@ -210,9 +247,11 @@ for ir_idx = 1:num_ir
     end
 end
 
-plot_IR = categorical(plot_IR, unique_labels);
+% スキップされたラベルを除いた状態でカテゴリカル化
+plot_IR = categorical(plot_IR, plot_labels);
 plot_Method = categorical(plot_Method, {'Proposed CR', 'Lifting', 'Monaural WPE'});
 
+% グラフ描画
 figure('Position', [100, 100, 750, 480]);
 boxchart(plot_IR, plot_SDR, 'GroupByColor', plot_Method);
 
@@ -223,15 +262,66 @@ title('Dereverberation Performance Across Different RT60', 'FontSize', 13);
 legend('Location', 'northwest', 'FontSize', 10);
 set(gca, 'FontSize', 11);
 
+% --- 計算時間表示（残響時間ごとに集計） ---
 fprintf('\n---- 平均処理時間 (1セットあたり) ----\n')
-fprintf('Proposed CR : %.4f 秒\n', mean(time_CR(:)));
-fprintf('Lifting     : %.4f 秒\n', mean(time_Lift(:)));
-fprintf('Monaural WPE: %.4f 秒\n', mean(time_WPE(:)));
-
-st = dbstack('-completenames');
-[folderPath, fileName, ext] = fileparts(st(1).file);
-resultFileName = strcat(fileName,  '_result');
-saveFilePath = fullfile(folderPath, [resultFileName, '.mat']);
-data = rand(100, 1);
-save(saveFilePath, 'data');
-fprintf('結果を %s に保存しました。\n', saveFilePath);
+for ir_idx = 1:num_ir
+    % 3番目はプロットはしませんが、計算自体は回っているため参考値として "(Skipped in plot)" と添えて出力します
+    status_str = "";
+    if ir_idx == 3
+        status_str = " (Skipped in plot)";
+    end
+    
+    fprintf('[IR %d: %s]%s\n', ir_idx, rt60_labels{ir_idx}, status_str);
+    fprintf('  Proposed CR : %.4f 秒\n', mean(time_CR(:, ir_idx)));
+    fprintf('  Lifting     : %.4f 秒\n', mean(time_Lift(:, ir_idx)));
+    fprintf('  Monaural WPE: %.4f 秒\n', mean(time_WPE(:, ir_idx)));
+end
+% 
+% idx = 1;
+% for ir_idx = 1:num_ir
+%     for s_idx = 1:num_sets
+%         % CR法
+%         plot_SDR(idx) = delta_SDR_CR(s_idx, ir_idx);
+%         plot_IR{idx}  = unique_labels{ir_idx};
+%         plot_Method{idx} = 'Proposed CR';
+%         idx = idx + 1;
+% 
+%         % Lifting法
+%         plot_SDR(idx) = delta_SDR_Lift(s_idx, ir_idx);
+%         plot_IR{idx}  = unique_labels{ir_idx};
+%         plot_Method{idx} = 'Lifting';
+%         idx = idx + 1;
+% 
+%         % WPE法
+%         plot_SDR(idx) = delta_SDR_WPE(s_idx, ir_idx);
+%         plot_IR{idx}  = unique_labels{ir_idx};
+%         plot_Method{idx} = 'Monaural WPE';
+%         idx = idx + 1;
+%     end
+% end
+% 
+% plot_IR = categorical(plot_IR, unique_labels);
+% plot_Method = categorical(plot_Method, {'Proposed CR', 'Lifting', 'Monaural WPE'});
+% 
+% figure('Position', [100, 100, 750, 480]);
+% boxchart(plot_IR, plot_SDR, 'GroupByColor', plot_Method);
+% 
+% grid on;
+% ylabel('\Delta SDR [dB]', 'FontSize', 12, 'FontWeight', 'bold');
+% xlabel('Room Impulse Response (RIR)', 'FontSize', 12);
+% title('Dereverberation Performance Across Different RT60', 'FontSize', 13);
+% legend('Location', 'northwest', 'FontSize', 10);
+% set(gca, 'FontSize', 11);
+% 
+% fprintf('\n---- 平均処理時間 (1セットあたり) ----\n')
+% fprintf('Proposed CR : %.4f 秒\n', mean(time_CR(:)));
+% fprintf('Lifting     : %.4f 秒\n', mean(time_Lift(:)));
+% fprintf('Monaural WPE: %.4f 秒\n', mean(time_WPE(:)));
+% 
+% st = dbstack('-completenames');
+% [folderPath, fileName, ext] = fileparts(st(1).file);
+% resultFileName = strcat(fileName,  '_result');
+% saveFilePath = fullfile(folderPath, [resultFileName, '.mat']);
+% data = rand(100, 1);
+% save(saveFilePath, 'data');
+% fprintf('結果を %s に保存しました。\n', saveFilePath);
