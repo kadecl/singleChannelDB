@@ -61,9 +61,13 @@
 単一のマイクで異なる区間に録音された2つの残響信号 $\bm{x}_1 \in \mathbb{R}^{n_1}, \bm{x}_2 \in \mathbb{R}^{n_2}$ は，
 共通のRIR $\bm{h} \in \mathbb{R}^d$ と，互いに素な2つのドライ信号 $\bm{s}_1 \in \mathbb{R}^{l_1}, \bm{s}_2 \in \mathbb{R}^{l_2}$ の線形畳み込みとして次式でモデル化される：
 \begin{align}
-\bm{x}^i = \bm{s}^i \ast \bm{h}~ \text{for}~i=1,2
+\bm{x}_i = \bm{s}_i \ast \bm{h}~ \text{for}~i=1,2.
 \end{align}
-再び畳み込みの可換性を利用して未知のRIR $\bm{h}$ を消去（$\bm{x}_1 \ast \bm{s}_2 = \bm{s}_1 \ast \bm{h} \ast \bm{s}_2 = \bm{x}_2 \ast \bm{s}_1$）すると，以下の単チャネルCR式が成立する：
+畳み込みの可換性を利用して未知のRIR $\bm{h}$ を消去する．
+\begin{equation}
+\bm{x}_1 \ast \bm{s}_2 = \bm{s}_1 \ast \bm{h} \ast \bm{s}_2 = \bm{x}_2 \ast \bm{s}_1
+\end{equation}
+すると以下の単チャネルCR式が成立する：
 \begin{align}
 \underbrace{
     \begin{bmatrix}\mathbf{M}_{n_2-d+1}(\bm{x}_2)& -\mathbf{M}_{n_1-d+1}(\bm{x}_1)\end{bmatrix}
@@ -74,24 +78,22 @@
  = \bm{0}. \label{eq:TD_CR}
 \end{align}
 ここで $\mathbf{M}_p(\bm{a})\in\mathbb{R}^{(p+q-1)\times p}$ は，長さ$p$のベクトルに対するベクトル$\bm{a}\in\mathbb{R}^{q}$の畳み込み行列である．
-$\bm{s}_1, \bm{s}_2$ が\textbf{互いに素}であるとき，$d$次シルベスター行列 $\mathbf{\mathcal{M}}^{\text{time}}_d(\bm{x}_1, \bm{x}_2)$ の零空間（右特異ベクトル）を求めることで，スケール不定性を除いてドライ信号を一意に復元可能である．
-
-\paragraph*{空間計算量の問題}
-しかし，時間領域でのブラインド残響除去には空間計算量の問題が存在する．
-シルベスター行列 $\mathbf{\mathcal{M}}^{\text{time}}$ のサイズは $(n_1+n_2-d) \times (l_1+l_2)$ となり，長大残響環境ではRIRの長さ $d$ に伴い行列が巨大化する．
-例えば，ドライ信号とRIRの長さが共に1秒でサンプリング周波数が20\,kHzの場合，行列の要素数は約 $40,000 \times 40,000$ に達し，倍精度浮動小数点数で12\,GB以上のメモリを占有するため，一般的な計算環境での実行は極めて困難となる．
-
+$\bm{s}_1, \bm{s}_2$ が，スカラーによる自明なものを除いた何らかの共通するベクトルとの畳み込みになっていないとき，$d$次シルベスター行列 $\mathbf{\mathcal{M}}^{\text{time}}_d(\bm{x}_1, \bm{x}_2)$ の零空間（右特異ベクトル）を求めることで，スケール不定性を除いてドライ信号を一意に復元可能である．
 
 \section{提案法：サブバンドCross-Relation法}
 
 \subsection{時間周波数領域での定式化}
+第2節で述べた手法には空間計算量の問題が存在する．
+シルベスター行列 $\mathbf{\mathcal{M}}^{\text{time}}$ のサイズは $(n_1+n_2-d+1) \times (n_1+n_2-2d)$ となり，長大残響環境ではRIRの長さ $d$ に伴い行列が巨大化する．
+例えば，ドライ信号とRIRの長さが共に1秒でサンプリング周波数が20\,kHzの場合，行列の要素数は約 $40,000 \times 40,000$ に達し，倍精度浮動小数点数で12\,GB以上のメモリを占有するため，一般的な計算環境での実行は極めて困難となる．
+
 上述の空間計算量問題を解決するため，提案法では時間周波数領域におけるサブバンド畳み込みモデルに基づく定式化を採用する．
 すなわち，観測信号の短時間フーリエ変換のうち，$f$番目の周波数ビンを取り出した $\tilde{\bm{x}}_1^f\in\mathbb{C}^{n_1}, \tilde{\bm{x}}_2^f\in\mathbb{C}^{n_2}$ を以下でモデル化する\cite{li2018ctf}：
 \begin{equation}
     \tilde{\bm{x}}_1^f \approx \tilde{\bm{s}}_1^f \ast \tilde{h}^f, \quad \tilde{\bm{x}}_2^f \approx \tilde{\bm{s}}_2^f \ast \tilde{h}^f. \label{eq:TF_model}
 \end{equation}
 ここで，$\tilde{h}^f\in\mathbb{C}^d$ は時間フレーム方向に作用するサブバンドインパルス応答，$\tilde{\bm{s}}_1^f\in\mathbb{C}^{n_1-d+1}, \tilde{\bm{s}}_2^f\in\mathbb{C}^{n_2-d+1}$ はドライ音のサブバンドベクトルを表す．
-各周波数ビンごと独立に$\tilde{\bm{s}}_1,\tilde{\bm{s}}_2$を推定し，それぞれ逆短時間フーリエ変換によって時間領域へと書き戻すことで，目的信号を復元する．以降，周波数を示す添字 $f$ の表記を省略する．
+各周波数ビンごと独立に$\tilde{\bm{s}}_1,\tilde{\bm{s}}_2$を推定し，それぞれ逆短時間フーリエ変換によって時間領域へと書き戻すことで，目的信号を復元する．以降，周波数ビンを示す添字 $f$ の表記を省略する．
 
 % \subsection{シルベスター行列の特異値分解による解法}
 % 式\eqref{eq:TF_model}のサブバンド畳み込みモデルの下で，未知の共通因子であるサブバンドインパルス応答 $\bm{h}$ を消去することにより，

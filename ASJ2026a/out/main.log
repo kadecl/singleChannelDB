@@ -1,4 +1,4 @@
-This is e-pTeX, Version 3.141592653-p4.1.0-230214-2.6 (utf8.euc) (TeX Live 2023) (preloaded format=platex 2024.2.3)  28 JUN 2026 21:56
+This is e-pTeX, Version 3.141592653-p4.1.0-230214-2.6 (utf8.euc) (TeX Live 2023) (preloaded format=platex 2024.2.3)  28 JUN 2026 22:15
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -229,9 +229,9 @@ LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <12> not available
 LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <12> not available
 (Font)              Font shape `JY1/gt/m/n' tried instead on input line 47.
 LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <10> not available
-(Font)              Font shape `JT1/gt/m/n' tried instead on input line 77.
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 85.
 LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <10> not available
-(Font)              Font shape `JY1/gt/m/n' tried instead on input line 77.
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 85.
 [1
 
 
@@ -239,9 +239,9 @@ LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <10> not available
 File: ../Rk1NullspaceOfSylvester_STFTdomain/result/main20260620all.pdf Graphic file (type pdf)
 <../Rk1NullspaceOfSylvester_STFTdomain/result/main20260620all.pdf>
 LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <8> not available
-(Font)              Font shape `JT1/gt/m/n' tried instead on input line 232.
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 234.
 LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <8> not available
-(Font)              Font shape `JY1/gt/m/n' tried instead on input line 232.
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 234.
 [2] (out/main.aux) ) 
 Here is how much of TeX's memory you used:
  3302 strings out of 476693
@@ -252,4 +252,4 @@ Here is how much of TeX's memory you used:
  929 hyphenation exceptions out of 8191
  70i,21n,76p,592b,434s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on out/main.dvi (2 pages, 18596 bytes).
+Output written on out/main.dvi (2 pages, 18688 bytes).
