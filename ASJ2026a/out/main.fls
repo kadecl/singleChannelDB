@@ -359,10 +359,10 @@ INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy
 INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/ptex-fonts/standard/goth9.tfm
 INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/ptex-fonts/standard/tmin8.tfm
 OUTPUT out/main.dvi
-INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/ptex-fonts/standard/tmin6.tfm
 INPUT ../Rk1NullspaceOfSylvester_STFTdomain/result/main20260620all.pdf
 INPUT ../Rk1NullspaceOfSylvester_STFTdomain/result/main20260620all.pdf
 INPUT ../Rk1NullspaceOfSylvester_STFTdomain/result/main20260620all.pdf
 INPUT extractbb -B cropbox -O ../Rk1NullspaceOfSylvester_STFTdomain/result/main20260620all.pdf
+INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/ptex-fonts/standard/tmin6.tfm
 INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/ptex-fonts/standard/tgoth8.tfm
 INPUT out/main.aux
