@@ -8,7 +8,6 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \documentclass[10pt,twocolumn,dvipdfmx]{jarticle} % 11pt(標準)
-%\documentclass[11pt,dvipdfmx]{jarticle} % 11pt(標準)
 %\documentclass[10pt,twocolumn]{jarticle} % 10pt(オプション)
 \usepackage{onkoron}
 \usepackage{amsmath,amssymb,nccmath}    % 数式
@@ -110,7 +109,7 @@ $\bm{s}_1, \bm{s}_2$ のZ変換が共通の零点を持たないとき，$d$次S
 ただし，$\mathbf{\Sigma}$は特異値が降順に配置された対角行列であり，$\mathbf{V}[:,\text{end}]$は$\mathbf{V}$の最終列を表す．
 
 \begin{algorithm}[t]
-\caption{Proposed Method}
+\caption{Sub-band Monoaural CR Method}
 \label{alg:sylDerev_simple}
 \begin{algorithmic}[1]
 \Require Subband signals $\tilde{\bm{x}}_1\in\mathbb{C}^{N_1}, \tilde{\bm{x}}_2\in\mathbb{C}^{N_2}$ at a certain frequency bin, prescribed RIR length $D$
