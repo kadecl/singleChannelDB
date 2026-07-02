@@ -45,20 +45,21 @@
 \maketitle
 
 \section{前書き}
-% 近年，様々なブラインド残響除去手法の研究が進展しているが，その多くは複数マイクロホン構成を必要とするか，音声の非定常性など音源に対する強い統計的仮定に依存している．そのため，単チャネル設定下や非音声信号に対する残響除去性能が不十分であった．
 近年，様々なブラインド残響除去手法の研究が進展しているが，その多くは複数マイクロホン構成を必要とするか，音声の非定常性など音源に対する強い統計的仮定に依存している．そのため，単チャネル設定や非音声信号に対して十分な残響除去性能を発揮することは困難であった．
-本稿では，単一チャネル観測信号から切り出した複数の信号断片に対し，共通の室内インパルス応答（RIR）が畳み込まれるという関係性を利用した，音源の事前知識を要しない残響除去手法を提案する．
+本稿では，
+% 単一チャネル観測信号から切り出した複数の信号断片に対し，共通の室内インパルス応答（RIR）が畳み込まれるという関係性を利用した，
+畳み込みの性質を利用した，音源の事前知識を要しない手法を提案する．
 
-\section{時間領域でのCross-Relation法}\label{sec:TDCR}
-一般に，SIMO (Single-Input Multiple-Output) システムにおけるブラインドチャネル同定手法としてCross-Relation（CR）法が知られている\cite{li2018ctf}．
+\section{時間領域単チャネルCross-Relation法}\label{sec:TDCR}
+SIMO (Single-Input Multiple-Output) システムにおけるブラインドチャネル同定手法としてCross-Relation（CR）法が知られている\cite{li2018ctf}．
 本来のCR法は，単一の未知音源 $\bm{s}$ が異なる室内インパルス応答（RIR） $\bm{h}_1, \bm{h}_2$ を経て2つのマイクで観測される設定に基づき，
 畳み込みの可換性から導かれる関係式 $\bm{x}_1 \ast \bm{h}_2 - \bm{x}_2 \ast \bm{h}_1 = \bm{0}$ を用いて未知音源$\bm{s}$を代数的に消去し，RIRの組を直接同定する．
 
-これに対し本研究では，単一チャネル設定において未知音源とRIRの数学的役割を反転させ，CR法をクリーン信号の直接抽出へと応用する．
+これに対し本研究では，単一チャネル設定において未知音源とRIRの数学的役割を反転させ，CR法をクリーン信号の直接抽出へと応用する．その概念図を図\ref{fig:concept}に示す．
 単一のマイクで異なる区間に録音された2つの残響信号 $\bm{x}_1 \in \mathbb{R}^{n_1}, \bm{x}_2 \in \mathbb{R}^{n_2}$ は，
 共通のRIR $\bm{h} \in \mathbb{R}^d$ と，互いに素な2つのクリーン信号 $\bm{s}_1 \in \mathbb{R}^{n_1-d+1}, \bm{s}_2 \in \mathbb{R}^{n_2-d+1}$ の線形畳み込みとして次式でモデル化される：
 \begin{align}
-\bm{x}_i = \bm{s}_i \ast \bm{h}~ \text{for}~i=1,2.
+\bm{x}_i = \bm{s}_i \ast \bm{h}\quad \text{for}\quad i=1,2.
 \end{align}
 畳み込みの可換性を利用して未知変数 $\bm{h}$ を消去する:
 \begin{equation}
@@ -77,12 +78,21 @@
 ここで $\mathbf{M}_p(\bm{a})\in\mathbb{R}^{(p+q-1)\times p}$ は，長さ $q$ のベクトル $\bm{a}$ の畳み込み演算を表現する列数 $p$ のToeplitz行列であり，これらを並べた行列 $\bm{\mathcal{S}}_d(\bm{x}_1, \bm{x}_2)\in\mathbb{R}^{(n_1+n_2-d)\times (n_1+n_2-2d+2)}$ は $d$ 次Sylvester行列と呼ばれる．
 $\bm{s}_1, \bm{s}_2$ のZ変換が共通の零点を持たないとき，$d$次Sylvester行列 $\bm{\mathcal{S}}_d(\bm{x}_1, \bm{x}_2)$ の1次元右零空間基底を求めることで，スケール不定性を除いてクリーン信号を一意に復元可能である．
 しかし，実環境の信号に対しては行列 $\bm{\mathcal{S}}_d$ のサイズが巨大化し，行列演算が実行困難な点が問題である．
+\begin{figure}
+\centering
+\includegraphics[width=1.0\linewidth, trim={70 290 70 0}, clip]{../figure/concept.pdf}
+\vspace{-20pt}
+\caption{単チャネルCross-Relation法の概念図}
+\label{fig:concept}
+\end{figure}
 
 \section{提案法：サブバンドCross-Relation法}
 上述の問題を解決するため，提案法では時間周波数(TF)領域におけるサブバンド畳み込みモデルに基づく定式化を採用する．
 すなわち，観測信号の短時間フーリエ変換のうち，$f$番目の周波数ビンを取り出した $\tilde{\bm{x}}_1^f\in\mathbb{C}^{N_1}, \tilde{\bm{x}}_2^f\in\mathbb{C}^{N_2}$ を以下でモデル化する\cite{li2018ctf}：
 \begin{equation}
-    \tilde{\bm{x}}_1^f = \tilde{\bm{s}}_1^f \ast \tilde{\bm{h}}^f, \quad \tilde{\bm{x}}_2^f = \tilde{\bm{s}}_2^f \ast \tilde{\bm{h}}^f. \label{eq:TF_model}
+    % \tilde{\bm{x}}_1^f = \tilde{\bm{s}}_1^f \ast \tilde{\bm{h}}^f, \quad 
+    % \tilde{\bm{x}}_2^f = \tilde{\bm{s}}_2^f \ast \tilde{\bm{h}}^f.
+    \tilde{\bm{x}}_i^f = \tilde{\bm{s}}_i^f \ast \tilde{\bm{h}}^f, \quad \text{for}\quad i=1,2. \label{eq:TF_model}
 \end{equation}
 ここで，$\tilde{\bm{h}}^f\in\mathbb{C}^D$ は時間フレーム方向に作用するサブバンドインパルス応答，$\tilde{\bm{s}}_1^f\in\mathbb{C}^{N_1-D+1}, \tilde{\bm{s}}_2^f\in\mathbb{C}^{N_2-D+1}$ はクリーン音のサブバンドベクトルを表す．
 各周波数ビンごと独立に$\tilde{\bm{s}}_1^f,\tilde{\bm{s}}_2^f$を推定し，それぞれ逆短時間フーリエ変換によって時間領域へと書き戻すことで，目的信号を復元する．以降，周波数ビンを示す添字 $f$ の表記を省略する．
@@ -101,8 +111,8 @@ $\bm{s}_1, \bm{s}_2$ のZ変換が共通の零点を持たないとき，$d$次S
         }_{=:\tilde{\bm{s}}}
     = \bm{0}. \label{eq:sylvester}
 \end{equation}
-ここで $\bm{\mathcal{S}}_D\in\mathbb{C}^{(N_1+N_2-D)\times (N_1+N_2-2D+2)}$ は観測信号から構成される複素Sylvester行列であり，$\tilde{\bm{s}}$は復元対象の信号の組である．
-短時間フーリエ変換のシフト長を $L$ とすると，TF領域における信号の時間フレーム数 $N_1,N_2$ およびRIRの長さ $D$ は，時間領域の長さに比べて約 $1/L$ に縮小される．これに伴い，各周波数ビンで構成される複素Sylvester行列 $\bm{\mathcal{S}}_D$ のサイズは時間領域の $\bm{\mathcal{S}}_d$ に比べて圧縮され，一般的な計算環境でもSVDが実行可能となる．
+ここで $\bm{\mathcal{S}}_D\in\mathbb{C}^{(N_1+N_2-D)\times (N_1+N_2-2D+2)}$ は観測音のサブバンドベクトルから構成されるSylvester行列であり，$\tilde{\bm{s}}$は復元対象の信号を連結したベクトルである．
+短時間フーリエ変換のシフト長を $L$ とすると，TF領域における信号の時間フレーム数 $N_1,N_2$ およびRIRの長さ $D$ は，時間領域の長さに比べて約 $1/L$ に縮小される．これに伴い，各周波数ビンで構成されるSylvester行列 $\bm{\mathcal{S}}_D$ のサイズは時間領域の $\bm{\mathcal{S}}_d$ に比べて圧縮され，一般的な計算環境でも行列演算が実行可能となる．
 
 実際には，スペクトルのもれの影響により式\eqref{eq:sylvester}は厳密な解を持たない．そのため，$\bm{\mathcal{S}}_D$ のSVD $\bm{\mathcal{S}}_D = \mathbf{U} \bm{\Sigma} \mathbf{V}^\mathrm{H}$ を計算し，最小特異値に対応する右特異ベクトルにより$\bm{\mathcal{S}}_D$の右零空間の基底ベクトルを代替する．
 各周波数ビンに対する提案法の手続きをAlgorithm 1に示す．
@@ -140,11 +150,11 @@ TF領域での単チャネルブラインド残響除去法であるLifting法\c
 
 図\ref{fig:result}に残響時間ごとの各手法における $\Delta$SDR の箱ひげ図を示す．
 実験の結果，比較的短い残響環境（$\textrm{RT}_{60} = 0.3$\,s, $1.0$\,s）においては各手法間で残響除去性能に大きな有意差は見られなかったが，長大残響環境へと移行するにつれ，Lifting法およびWPE法は残響成分を十分に抑制できず，$\Delta$SDR が著しく低下した．
-これに対し，提案法（Proposed）は長大残響下（$\textrm{RT}_{60} = 2.3$\,s）においても高い残響除去性能を達成した．
+一方で，提案法（Proposed）は長大残響下（$\textrm{RT}_{60} = 2.3$\,s）においても高い除去性能を達成した．
 
 また，表\ref{tab:execution_time}に1ペアあたりの平均計算時間を示す．
 WPE法およびLifting法は，残響時間の伸長に伴って計算コストが爆発的に増加しており，特にLifting法では $\textrm{RT}_{60} = 2.3$\,s において10分を超える膨大な計算時間を要した．
-一方，提案法は複素Sylvester行列のSVDに基づく単純な解法であるため，残響時間が $0.3$\,s から $2.3$\,s へと激化した場合でも，実行時間は約 7\,s から 10\,s の範囲に留まり，ほぼ一定の計算コストを維持した．
+一方，提案法は最適化を要しない単純な解法であるため，残響時間が $0.3$\,s から $2.3$\,s へと激化した場合でも，実行時間は約 7\,s から 10\,s の範囲に留まり，ほぼ一定の計算コストを維持した．
 以上の結果から，提案法は長大残響環境において，優れた残響除去性能と低い計算コストを両立することが確認された．
 
 \begin{figure}
